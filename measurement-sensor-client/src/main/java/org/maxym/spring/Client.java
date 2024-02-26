@@ -1,6 +1,9 @@
 package org.maxym.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.knowm.xchart.QuickChart;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
 import org.maxym.spring.model.Measurement;
 import org.maxym.spring.model.Sensor;
 import org.springframework.http.HttpStatusCode;
@@ -12,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -41,8 +45,9 @@ public class Client {
 
 //        client.registerSensor();
 //        client.registerMeasurements();
-        client.getMeasurements();
+//        client.getMeasurements();
 
+        client.graphic();
     }
 
     public void registerSensor() {
@@ -99,17 +104,34 @@ public class Client {
         }
     }
 
-    public void getMeasurements() {
+    public List<Measurement> getMeasurements() {
         try {
-            webClient.get()
+            return webClient.get()
                     .uri("/measurements")
                     .retrieve()
                     .bodyToFlux(Measurement.class)
                     .collectList()
-                    .block()
-                    .forEach(System.out::println);
+                    .block();
         } catch (RuntimeException exception) {
             System.out.println(exception.getMessage());
         }
+        return new ArrayList<>();
+    }
+
+    public void graphic() {
+
+        List<Measurement> measurements = getMeasurements();
+
+        List<Double> xData = new ArrayList<>();
+        List<Double> yData = new ArrayList<>();
+        measurements.forEach(measurement -> yData.add(measurement.getValue()));
+
+        for (int i = 0; i < yData.size(); i++) {
+            xData.add((double) i);
+        }
+
+        XYChart chart = QuickChart.getChart("Sample Chart", "X", "Y", "y(x)", xData, yData);
+
+        new SwingWrapper(chart).displayChart();
     }
 }
