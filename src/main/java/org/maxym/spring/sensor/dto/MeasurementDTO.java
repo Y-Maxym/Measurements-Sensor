@@ -19,5 +19,5 @@ public class MeasurementDTO {
     private Boolean raining;
 
     @NotNull(message = "Sensor should not be empty")
-    private Sensor sensor;
+    private SensorDTO sensor;
 }

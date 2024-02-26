@@ -21,6 +21,11 @@ public abstract class MeasurementMapper {
     @Mapping(target = "measurementDate", ignore = true)
     abstract public Measurement measurementDTOToMeasurement(MeasurementDTO measurementDTO);
 
+    @Mapping(source = "value", target = "value")
+    @Mapping(source = "raining", target = "raining")
+    @Mapping(source = "sensor", target = "sensor")
+    abstract public MeasurementDTO measurementToMeasurementDTO(Measurement measurement);
+
     @Named("mappingSensor")
     protected Sensor mappingSensor(String name) {
         return sensorService.findByName(name).orElseThrow();

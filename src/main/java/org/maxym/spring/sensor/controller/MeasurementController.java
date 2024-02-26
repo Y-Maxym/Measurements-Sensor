@@ -2,6 +2,7 @@ package org.maxym.spring.sensor.controller;
 
 import jakarta.validation.Valid;
 import org.maxym.spring.sensor.dto.MeasurementDTO;
+import org.maxym.spring.sensor.model.Measurement;
 import org.maxym.spring.sensor.service.MeasurementService;
 import org.maxym.spring.sensor.util.mapper.MeasurementMapper;
 import org.maxym.spring.sensor.util.request.validator.MeasurementValidator;
@@ -32,6 +33,14 @@ public class MeasurementController {
         this.measurementService = measurementService;
         this.measurementMapper = measurementMapper;
         this.measurementValidator = measurementValidator;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MeasurementDTO>> getAllMeasurements() {
+        List<MeasurementDTO> measurementDTOS = measurementService.findAll().stream()
+                .map(measurementMapper::measurementToMeasurementDTO)
+                .toList();
+        return ResponseEntity.status(HttpStatus.OK).body(measurementDTOS);
     }
 
     @PostMapping("/add")

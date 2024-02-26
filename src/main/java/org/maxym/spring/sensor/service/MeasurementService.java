@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class MeasurementService {
@@ -15,6 +17,10 @@ public class MeasurementService {
     @Autowired
     public MeasurementService(MeasurementRepository measurementRepository) {
         this.measurementRepository = measurementRepository;
+    }
+
+    public List<Measurement> findAll() {
+        return measurementRepository.findAll();
     }
 
     @Transactional
