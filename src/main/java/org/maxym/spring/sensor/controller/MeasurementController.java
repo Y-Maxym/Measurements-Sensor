@@ -43,6 +43,12 @@ public class MeasurementController {
         return ResponseEntity.status(HttpStatus.OK).body(measurementDTOS);
     }
 
+    @GetMapping("/rainyDaysCount")
+    public ResponseEntity<Long> getCountRainyDays() {
+        Long rainyDays = measurementService.countAllByRainingTrue();
+        return ResponseEntity.status(HttpStatus.OK).body(rainyDays);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Void> addMeasurement(@RequestBody @Valid MeasurementDTO measurementDTO,
                                                BindingResult bindingResult) {

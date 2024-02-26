@@ -23,6 +23,10 @@ public class MeasurementService {
         return measurementRepository.findAll();
     }
 
+    public Long countAllByRainingTrue() {
+        return measurementRepository.countAllByRainingTrue();
+    }
+
     @Transactional
     public void save(Measurement measurement) {
         measurementRepository.save(measurement);
