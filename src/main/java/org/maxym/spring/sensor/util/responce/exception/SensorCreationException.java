@@ -1,8 +1,14 @@
 package org.maxym.spring.sensor.util.responce.exception;
 
-public class SensorCreationException extends RuntimeException {
+import lombok.Getter;
+import org.maxym.spring.sensor.util.responce.error.SensorFieldErrorResponse;
 
-    public SensorCreationException(String message) {
-        super(message);
+import java.util.List;
+
+@Getter
+public class SensorCreationException extends SensorException {
+
+    public SensorCreationException(String message, List<SensorFieldErrorResponse> errors) {
+        super(message, errors);
     }
 }

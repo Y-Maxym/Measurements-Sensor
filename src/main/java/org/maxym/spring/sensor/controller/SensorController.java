@@ -5,7 +5,8 @@ import org.maxym.spring.sensor.dto.SensorRequest;
 import org.maxym.spring.sensor.service.SensorService;
 import org.maxym.spring.sensor.util.mapper.SensorMapper;
 import org.maxym.spring.sensor.util.request.validator.SensorValidator;
-import org.maxym.spring.sensor.util.responce.SensorErrorResponse;
+import org.maxym.spring.sensor.util.responce.error.SensorErrorResponse;
+import org.maxym.spring.sensor.util.responce.error.SensorFieldErrorResponse;
 import org.maxym.spring.sensor.util.responce.exception.SensorAlreadyExistException;
 import org.maxym.spring.sensor.util.responce.exception.SensorCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/sensors")
@@ -36,17 +40,13 @@ public class SensorController {
         sensorValidator.validate(sensorRequest, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            StringBuilder errors = new StringBuilder();
+            List<SensorFieldErrorResponse> errors = new ArrayList<>();
 
-            bindingResult.getFieldErrors()
-                    .forEach(field -> errors
-                            .append("Field: ")
-                            .append(field.getField())
-                            .append(" Error: ")
-                            .append(field.getDefaultMessage())
-                    );
+            bindingResult.getFieldErrors().stream()
+                    .map(SensorFieldErrorResponse::new)
+                    .forEach(errors::add);
 
-            throw new SensorCreationException(errors.toString());
+            throw new SensorCreationException("An error occurred.", errors);
         }
 
         sensorService.save(sensorMapper.sensorRequestToSensor(sensorRequest));
@@ -56,13 +56,13 @@ public class SensorController {
 
     @ExceptionHandler
     private ResponseEntity<SensorErrorResponse> handleException(SensorCreationException exception) {
-        SensorErrorResponse response = new SensorErrorResponse(exception.getMessage(), System.currentTimeMillis());
+        SensorErrorResponse response = new SensorErrorResponse(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    private ResponseEntity<SensorErrorResponse> handleException(SensorAlreadyExistException ignore) {
-        SensorErrorResponse response = new SensorErrorResponse("This sensor is already exist.", System.currentTimeMillis());
+    private ResponseEntity<SensorErrorResponse> handleException(SensorAlreadyExistException exception) {
+        SensorErrorResponse response = new SensorErrorResponse("An error occurred.", exception.getErrors(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
