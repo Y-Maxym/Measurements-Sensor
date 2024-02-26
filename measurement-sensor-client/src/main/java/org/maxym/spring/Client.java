@@ -39,21 +39,14 @@ public class Client {
     public static void main(String[] args) {
         Client client = new Client();
 
-        Random random = new Random();
+//        client.registerSensor();
+//        client.registerMeasurements();
+        client.getMeasurements();
 
-        List<Sensor> sensors = new ArrayList<Sensor>() {{
-            add(new Sensor("Sensor1"));
-            add(new Sensor("Sensor2"));
-            add(new Sensor("Sensor3"));
-        }};
-
-        Stream.generate(() -> new Measurement(random.nextDouble() * 200 - 100, random.nextBoolean(), sensors.get(random.nextInt(3))))
-                .limit(1000)
-                .map(client::registerMeasurements)
-                .forEach(System.out::println);
     }
 
-    public String registerSensor(Sensor sensor) {
+    public void registerSensor() {
+        Sensor sensor = new Sensor("Sensor");
         try {
             webClient.post()
                     .uri("/sensors/registration")
@@ -66,13 +59,28 @@ public class Client {
                                             Mono.error(new RuntimeException(error))))
                     .bodyToMono(Void.class)
                     .block();
-            return "OK";
+            System.out.println("OK");
         } catch (RuntimeException exception) {
-            return exception.getMessage();
+            System.out.println(exception.getMessage());
         }
     }
 
-    public String registerMeasurements(Measurement measurement) {
+    public void registerMeasurements() {
+        Random random = new Random();
+
+        List<Sensor> sensors = new ArrayList<Sensor>() {{
+            add(new Sensor("Sensor1"));
+            add(new Sensor("Sensor2"));
+            add(new Sensor("Sensor3"));
+        }};
+
+        Stream.generate(() -> new Measurement(random.nextDouble() * 200 - 100, random.nextBoolean(), sensors.get(random.nextInt(3))))
+                .limit(1000)
+                .map(this::registerMeasurement)
+                .forEach(System.out::println);
+    }
+
+    public String registerMeasurement(Measurement measurement) {
         try {
             webClient.post()
                     .uri("/measurements/add")
@@ -88,6 +96,20 @@ public class Client {
             return "OK";
         } catch (RuntimeException exception) {
             return exception.getMessage();
+        }
+    }
+
+    public void getMeasurements() {
+        try {
+            webClient.get()
+                    .uri("/measurements")
+                    .retrieve()
+                    .bodyToFlux(Measurement.class)
+                    .collectList()
+                    .block()
+                    .forEach(System.out::println);
+        } catch (RuntimeException exception) {
+            System.out.println(exception.getMessage());
         }
     }
 }
