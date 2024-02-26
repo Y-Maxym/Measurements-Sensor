@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "sensor", schema = "public")
-@Data
 public class Sensor {
 
     @Id

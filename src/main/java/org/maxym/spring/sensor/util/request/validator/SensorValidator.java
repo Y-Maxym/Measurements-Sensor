@@ -1,9 +1,8 @@
 package org.maxym.spring.sensor.util.request.validator;
 
-import org.maxym.spring.sensor.dto.SensorRequest;
-import org.maxym.spring.sensor.model.Sensor;
+import org.maxym.spring.sensor.dto.SensorDTO;
 import org.maxym.spring.sensor.service.SensorService;
-import org.maxym.spring.sensor.util.responce.error.SensorFieldErrorResponse;
+import org.maxym.spring.sensor.util.responce.error.FieldErrorResponse;
 import org.maxym.spring.sensor.util.responce.exception.SensorAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -25,18 +24,18 @@ public class SensorValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return Sensor.class.equals(clazz);
+        return SensorDTO.class.equals(clazz);
     }
 
     @Override
     public void validate(@NonNull Object target,
                          @NonNull Errors errors) {
 
-        SensorRequest sensor = (SensorRequest) target;
+        SensorDTO sensor = (SensorDTO) target;
 
         if (sensorService.findByName(sensor.getName()).isPresent()) {
             errors.rejectValue("name", "sensor.exist", "This sensor is already exist.");
-            throw new SensorAlreadyExistException("An error occurred.", Collections.singletonList(new SensorFieldErrorResponse("name", "This sensor is already exist.")));
+            throw new SensorAlreadyExistException("An error occurred.", Collections.singletonList(new FieldErrorResponse("name", "This sensor is already exist.")));
         }
     }
 }

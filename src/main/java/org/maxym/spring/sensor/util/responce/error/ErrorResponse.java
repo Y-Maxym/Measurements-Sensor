@@ -7,8 +7,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class SensorErrorResponse {
+public class ErrorResponse {
     private String message;
-    private List<SensorFieldErrorResponse> errors;
+    private List<FieldErrorResponse> errors;
     private long timestamp;
 }
