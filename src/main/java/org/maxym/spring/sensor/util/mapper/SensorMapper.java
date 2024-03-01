@@ -11,4 +11,7 @@ public interface SensorMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "name", target = "name")
     Sensor sensorDTOToSensor(SensorDTO sensorDTO);
+
+    @Mapping(source = "name", target = "name")
+    SensorDTO sensorToSensorDTO(Sensor sensor);
 }

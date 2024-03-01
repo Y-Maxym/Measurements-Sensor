@@ -2,6 +2,7 @@ package org.maxym.spring.sensor.controller;
 
 import jakarta.validation.Valid;
 import org.maxym.spring.sensor.dto.SensorDTO;
+import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.SensorService;
 import org.maxym.spring.sensor.util.mapper.SensorMapper;
 import org.maxym.spring.sensor.util.request.validator.SensorValidator;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/sensors")
@@ -31,6 +33,16 @@ public class SensorController {
         this.sensorService = sensorService;
         this.sensorValidator = sensorValidator;
         this.sensorMapper = sensorMapper;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SensorDTO>> getAllSensors() {
+        List<Sensor> sensors = sensorService.findAll();
+        List<SensorDTO> sensorDTOs = sensors.stream()
+                .map(sensorMapper::sensorToSensorDTO)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(sensorDTOs, HttpStatus.OK);
     }
 
     @PostMapping("/registration")
