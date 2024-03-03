@@ -1,14 +1,11 @@
 package org.maxym.spring.sensor.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.maxym.spring.sensor.dto.LoginRequest;
 import org.maxym.spring.sensor.dto.UserRequestDTO;
-import org.maxym.spring.sensor.dto.UserResponseDTO;
 import org.maxym.spring.sensor.model.User;
-import org.maxym.spring.sensor.security.service.AuthenticationService;
+import org.maxym.spring.sensor.security.service.JWTService;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.UserMapper;
 import org.maxym.spring.sensor.util.request.validator.UserRequestValidator;
@@ -17,7 +14,8 @@ import org.maxym.spring.sensor.util.responce.error.FieldErrorResponse;
 import org.maxym.spring.sensor.util.responce.exception.UserCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -31,17 +29,18 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 public class AuthController {
 
     private final UserService userService;
+    private final JWTService JWTService;
+    private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final UserRequestValidator userRequestValidator;
-    private final AuthenticationService authenticationService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Validated UserRequestDTO userRequestDTO,
-                                                      BindingResult bindingResult) {
+    public ResponseEntity<Void> createUser(@RequestBody @Validated UserRequestDTO userRequestDTO,
+                                                      BindingResult bindingResult,
+                                                      HttpServletResponse response) {
 
         userRequestValidator.validate(userRequestDTO, bindingResult);
 
@@ -57,24 +56,26 @@ public class AuthController {
 
         User user = userMapper.userRequestDTOToUser(userRequestDTO);
         userService.save(user);
-        UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTO(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
+
+        String token = JWTService.generateToken(userRequestDTO.getUsername());
+        response.setHeader("Authorization", "Bearer " + token);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest,
-                                        HttpServletRequest request,
                                         HttpServletResponse response) {
 
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
-        try {
-            Authentication authenticate = authenticationService.authenticate(username, password);
-            authenticationService.saveContext(request, response, authenticate);
-        } catch (AuthenticationException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad credentials");
-        }
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password));
+
+        String token = JWTService.generateToken(username);
+        response.setHeader("Authorization", "Bearer " + token);
+
         return ResponseEntity.status(HttpStatus.OK).body("User authenticated successfully");
 
     }
@@ -83,6 +84,11 @@ public class AuthController {
     public ResponseEntity<ErrorResponse> handleException(UserCreationException exception) {
         ErrorResponse response = new ErrorResponse(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(AuthenticationException ignore) {
+        return new ResponseEntity<>("Bad credentials", HttpStatus.BAD_REQUEST);
     }
 
 

@@ -1,7 +1,7 @@
 package org.maxym.spring.sensor.security.config;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.model.enums.Authorities;
+import org.maxym.spring.sensor.security.filter.JWTFilter;
 import org.maxym.spring.sensor.security.service.AuthDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextHolderFilter;
-import org.springframework.security.web.context.SecurityContextRepository;
 
 import static org.maxym.spring.sensor.model.enums.Authorities.*;
 
@@ -28,6 +25,7 @@ import static org.maxym.spring.sensor.model.enums.Authorities.*;
 public class SecurityConfig {
 
     private final AuthDetailsService authDetailsService;
+    private final JWTFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -47,15 +45,10 @@ public class SecurityConfig {
                         .requestMatchers("/measurements/add").hasAnyAuthority(CREATE_MEASUREMENT.name(), PERMIT_ALL.name())
                         .requestMatchers("/users/*").hasAnyAuthority(READ_USERS.name(), PERMIT_ALL.name()))
                 .sessionManagement(managementConfigurer -> managementConfigurer
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(authDetailsService)
-                .addFilterBefore(new SecurityContextHolderFilter(securityContextRepository()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManagerBean(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
 
     @Bean
@@ -64,7 +57,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityContextRepository securityContextRepository() {
-        return new HttpSessionSecurityContextRepository();
+    public AuthenticationManager authenticationManagerBean(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
 }

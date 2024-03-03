@@ -2,14 +2,12 @@ package org.maxym.spring.sensor.controller;
 
 import jakarta.validation.Valid;
 import org.maxym.spring.sensor.dto.MeasurementDTO;
-import org.maxym.spring.sensor.model.Measurement;
 import org.maxym.spring.sensor.service.MeasurementService;
 import org.maxym.spring.sensor.util.mapper.MeasurementMapper;
 import org.maxym.spring.sensor.util.request.validator.MeasurementValidator;
 import org.maxym.spring.sensor.util.responce.error.ErrorResponse;
 import org.maxym.spring.sensor.util.responce.error.FieldErrorResponse;
 import org.maxym.spring.sensor.util.responce.exception.MeasurementCreationException;
-import org.maxym.spring.sensor.util.responce.exception.SensorCreationException;
 import org.maxym.spring.sensor.util.responce.exception.SensorNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

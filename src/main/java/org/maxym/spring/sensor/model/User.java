@@ -25,7 +25,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @ElementCollection(targetClass = Authorities.class, fetch = FetchType.LAZY)
+    @ElementCollection(targetClass = Authorities.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     @Column(name = "authorities")
