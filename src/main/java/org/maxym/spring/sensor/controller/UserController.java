@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,6 +23,15 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> getUsers() {
+        List<UserResponseDTO> userResponseDTOS = userService.findAll().stream()
+                .map(userMapper::userToUserResponseDTO)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(userResponseDTOS);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
@@ -33,6 +43,6 @@ public class UserController {
         }
         User user = optionalUser.get();
         UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTO(user);
-        return ResponseEntity.status(HttpStatus.FOUND).body(userResponseDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponseDTO);
     }
 }

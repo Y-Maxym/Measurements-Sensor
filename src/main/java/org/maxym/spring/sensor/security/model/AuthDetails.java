@@ -2,10 +2,13 @@ package org.maxym.spring.sensor.security.model;
 
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.User;
+import org.maxym.spring.sensor.model.enums.Authorities;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class AuthDetails implements UserDetails {
@@ -14,7 +17,10 @@ public class AuthDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return user.getAuthorities().stream()
+                .map(Authorities::name)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.maxym.spring.sensor.security.config;
 
 import lombok.RequiredArgsConstructor;
+import org.maxym.spring.sensor.model.enums.Authorities;
 import org.maxym.spring.sensor.security.service.AuthDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,8 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 
+import static org.maxym.spring.sensor.model.enums.Authorities.*;
+
 
 @Configuration
 @EnableWebSecurity
@@ -30,11 +33,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
         return httpSecurity
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login", "/signup").permitAll()
-                        .anyRequest().fullyAuthenticated())
+                        .requestMatchers("/sensors").hasAnyAuthority(READ_SENSOR.name(), PERMIT_ALL.name())
+                        .requestMatchers("/sensors/registration").hasAnyAuthority(CREATE_SENSOR.name(), PERMIT_ALL.name())
+                        .requestMatchers("/measurements").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())
+                        .requestMatchers("/measurements/rainyDaysCount").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())
+                        .requestMatchers("/measurements/add").hasAnyAuthority(CREATE_MEASUREMENT.name(), PERMIT_ALL.name())
+                        .requestMatchers("/users/*").hasAnyAuthority(READ_USERS.name(), PERMIT_ALL.name()))
                 .sessionManagement(managementConfigurer -> managementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .userDetailsService(authDetailsService)

@@ -2,13 +2,13 @@ package org.maxym.spring.sensor.service;
 
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.User;
+import org.maxym.spring.sensor.model.enums.Authorities;
 import org.maxym.spring.sensor.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,7 +37,15 @@ public class UserService {
     @Transactional
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAuthorities(defaultAuthorities());
         userRepository.save(user);
+    }
+
+    private Set<Authorities> defaultAuthorities() {
+        return new HashSet<>() {{
+           add(Authorities.CREATE_SENSOR);
+           add(Authorities.READ_SENSOR);
+        }};
     }
 
 }
