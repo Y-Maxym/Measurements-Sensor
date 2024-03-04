@@ -1,40 +1,44 @@
 package org.maxym.spring.sensor.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.BitSet;
 
-@Data
 @Entity
 @Table(name = "measurement", schema = "public")
+@Data
 public class Measurement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Integer id;
 
-    @NotNull(message = "Value should not be empty")
-    @Max(value = 100, message = "Value should be less or equals 100")
-    @Min(value = -100, message = "Value should be greater of equals -100")
-    @Column(name = "value")
-    private Double value;
+    @Column(name = "value", nullable = false, updatable = false, precision = 4, scale = 1)
+    private BigDecimal value;
 
-    @NotNull(message = "Raining should not be empty")
-    @Column(name = "raining")
+    @Column(name = "raining", nullable = false, updatable = false)
     private Boolean raining;
 
-    @NotNull(message = "Sensor should not be empty")
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "sensor_id", referencedColumnName = "id")
+    @ManyToOne(cascade = CascadeType.REMOVE, optional = false)
+    @JoinColumn(name = "sensor_id", referencedColumnName = "id",
+            nullable = false,
+            updatable = false,
+            foreignKey = @ForeignKey(name = "fk_sensor_id",
+                    value = ConstraintMode.CONSTRAINT,
+                    foreignKeyDefinition = "FOREIGN KEY (sensor_id) REFERENCES sensor(id) ON DELETE CASCADE"))
     private Sensor sensor;
 
     @CreationTimestamp
-    @Column(name = "measurement_date")
+    @Column(name = "measurement_date", nullable = false, updatable = false)
     private LocalDateTime measurementDate;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 }

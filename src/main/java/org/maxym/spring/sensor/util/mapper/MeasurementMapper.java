@@ -15,15 +15,11 @@ public abstract class MeasurementMapper {
     private SensorService sensorService;
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "value", target = "value")
-    @Mapping(source = "raining", target = "raining")
-    @Mapping(source = "sensor.name", target = "sensor", qualifiedByName = "mappingSensor")
     @Mapping(target = "measurementDate", ignore = true)
+    @Mapping(source = "sensor.name", target = "sensor", qualifiedByName = "mappingSensor")
+    @Mapping(target = "updatedAt", ignore = true)
     abstract public Measurement measurementDTOToMeasurement(MeasurementDTO measurementDTO);
 
-    @Mapping(source = "value", target = "value")
-    @Mapping(source = "raining", target = "raining")
-    @Mapping(source = "sensor", target = "sensor")
     abstract public MeasurementDTO measurementToMeasurementDTO(Measurement measurement);
 
     @Named("mappingSensor")

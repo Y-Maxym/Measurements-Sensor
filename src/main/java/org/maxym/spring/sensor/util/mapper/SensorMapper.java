@@ -9,9 +9,9 @@ import org.maxym.spring.sensor.model.Sensor;
 public interface SensorMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "name", target = "name")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     Sensor sensorDTOToSensor(SensorDTO sensorDTO);
 
-    @Mapping(source = "name", target = "name")
     SensorDTO sensorToSensorDTO(Sensor sensor);
 }

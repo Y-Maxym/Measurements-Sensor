@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/measurements").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())
                         .requestMatchers("/measurements/rainyDaysCount").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())
                         .requestMatchers("/measurements/add").hasAnyAuthority(CREATE_MEASUREMENT.name(), PERMIT_ALL.name())
-                        .requestMatchers("/users/*").hasAnyAuthority(READ_USERS.name(), PERMIT_ALL.name()))
+                        .requestMatchers("/users/**").hasAnyAuthority(READ_USERS.name(), PERMIT_ALL.name()))
                 .sessionManagement(managementConfigurer -> managementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(authDetailsService)

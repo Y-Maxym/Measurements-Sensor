@@ -10,12 +10,10 @@ import org.maxym.spring.sensor.model.User;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
+    @Mapping(target = "authorities", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     User userRequestDTOToUser(UserRequestDTO userRequestDTO);
 
-    @Mapping(source = "username", target = "username")
-    @Mapping(source = "email", target = "email")
     UserResponseDTO userToUserResponseDTO(User user);
 }
