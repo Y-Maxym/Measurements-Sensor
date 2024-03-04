@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/login", "/signup").permitAll()
+                        .requestMatchers("/login", "/refresh", "/signup").permitAll()
                         .requestMatchers("/sensors").hasAnyAuthority(READ_SENSOR.name(), PERMIT_ALL.name())
                         .requestMatchers("/sensors/registration").hasAnyAuthority(CREATE_SENSOR.name(), PERMIT_ALL.name())
                         .requestMatchers("/measurements").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())

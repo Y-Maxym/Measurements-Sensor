@@ -66,16 +66,4 @@ public class SensorController {
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(SensorCreationException exception) {
-        ErrorResponse response = new ErrorResponse(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(SensorAlreadyExistException exception) {
-        ErrorResponse response = new ErrorResponse("An error occurred.", exception.getErrors(), System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
 }

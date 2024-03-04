@@ -1,9 +1,10 @@
 package org.maxym.spring.sensor.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.maxym.spring.sensor.model.User;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,9 @@ import java.time.LocalDateTime;
         }
 )
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RefreshToken {
 
     @Id
