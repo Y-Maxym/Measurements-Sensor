@@ -1,10 +1,12 @@
 package org.maxym.spring.sensor.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.maxym.spring.sensor.model.User;
 
 import java.time.LocalDateTime;
 

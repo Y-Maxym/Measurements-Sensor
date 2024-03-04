@@ -38,12 +38,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login", "/refresh", "/signup").permitAll()
+                        .requestMatchers("/users/info").authenticated()
                         .requestMatchers("/sensors").hasAnyAuthority(READ_SENSOR.name(), PERMIT_ALL.name())
                         .requestMatchers("/sensors/registration").hasAnyAuthority(CREATE_SENSOR.name(), PERMIT_ALL.name())
                         .requestMatchers("/measurements").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())
                         .requestMatchers("/measurements/rainyDaysCount").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())
                         .requestMatchers("/measurements/add").hasAnyAuthority(CREATE_MEASUREMENT.name(), PERMIT_ALL.name())
-                        .requestMatchers("/users/**").hasAnyAuthority(READ_USERS.name(), PERMIT_ALL.name()))
+                        .requestMatchers("/users/**").hasAnyAuthority(READ_USERS.name(), PERMIT_ALL.name())
+                        .anyRequest().hasAuthority(PERMIT_ALL.name()))
                 .sessionManagement(managementConfigurer -> managementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(authDetailsService)

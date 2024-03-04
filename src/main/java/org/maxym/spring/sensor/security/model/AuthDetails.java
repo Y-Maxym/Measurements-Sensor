@@ -1,5 +1,6 @@
 package org.maxym.spring.sensor.security.model;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.model.enums.Authorities;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Getter
 public class AuthDetails implements UserDetails {
 
     private final User user;

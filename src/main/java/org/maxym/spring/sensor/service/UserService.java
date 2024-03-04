@@ -8,7 +8,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,8 +46,7 @@ public class UserService {
 
     private Set<Authorities> defaultAuthorities() {
         return new HashSet<>() {{
-           add(Authorities.CREATE_SENSOR);
-           add(Authorities.READ_SENSOR);
+            add(Authorities.CREATE_SENSOR);
         }};
     }
 

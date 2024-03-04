@@ -6,8 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.LoginRequest;
 import org.maxym.spring.sensor.dto.UserRequestDTO;
-import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.model.RefreshToken;
+import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.security.service.JWTService;
 import org.maxym.spring.sensor.security.service.RefreshTokenService;
 import org.maxym.spring.sensor.service.UserService;
@@ -112,7 +112,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Refresh Token");
         }
 
-        String username = refreshTokenService.getUsernameByToken(refreshToken);
+        String username = refreshTokenService.findUsernameByToken(refreshToken);
         if (username == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refresh Token is not linked to any user");
         }

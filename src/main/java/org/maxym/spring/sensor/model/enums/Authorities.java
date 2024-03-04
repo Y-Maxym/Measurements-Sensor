@@ -1,5 +1,6 @@
 package org.maxym.spring.sensor.model.enums;
 
+// TODO: implement entity
 public enum Authorities {
     READ_SENSOR,
     CREATE_SENSOR,

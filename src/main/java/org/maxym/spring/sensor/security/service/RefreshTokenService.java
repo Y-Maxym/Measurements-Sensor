@@ -3,9 +3,9 @@ package org.maxym.spring.sensor.security.service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.maxym.spring.sensor.model.RefreshToken;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.repository.UserRepository;
-import org.maxym.spring.sensor.model.RefreshToken;
 import org.maxym.spring.sensor.security.repository.RefreshTokenRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -58,8 +58,8 @@ public class RefreshTokenService {
         refreshTokenRepository.deleteByUser_Username(username);
     }
 
-    public String getUsernameByToken(String token) {
-        return refreshTokenRepository.getUsernameByToken(token);
+    public String findUsernameByToken(String token) {
+        return refreshTokenRepository.findUsernameByToken(token);
     }
 
     public void addRefreshTokenToResponse(String refreshToken, HttpServletResponse response) {
