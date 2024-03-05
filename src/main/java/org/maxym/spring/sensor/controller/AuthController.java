@@ -57,7 +57,7 @@ public class AuthController {
             throw new UserCreationException("An error occurred.", errors);
         }
 
-        User user = userMapper.userRequestDTOToUser(userRequestDTO);
+        User user = userMapper.map(userRequestDTO);
         userService.save(user);
 
         String accessToken = JWTService.generateToken(userRequestDTO.getUsername());

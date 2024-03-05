@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.maxym.spring.sensor.model.enums.Authorities;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -33,14 +32,22 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @ElementCollection(targetClass = Authorities.class, fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id",
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            schema = "public",
+            joinColumns = @JoinColumn(name = "user_id",
+                    referencedColumnName = "id",
+                    nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "role_id",
+                    referencedColumnName = "id",
+                    nullable = false),
             foreignKey = @ForeignKey(name = "fk_user_id",
                     value = ConstraintMode.CONSTRAINT,
-                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES \"user\"(id) ON DELETE CASCADE")))
-    @Column(name = "authorities")
-    private Set<Authorities> authorities;
+                    foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES \"user\"(id) ON DELETE CASCADE"),
+            inverseForeignKey = @ForeignKey(name = "fk_role_id",
+                    value = ConstraintMode.CONSTRAINT,
+                    foreignKeyDefinition = "FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE"))
+    private Set<Role> roles;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

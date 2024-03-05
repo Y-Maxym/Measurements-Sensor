@@ -40,7 +40,8 @@ public class RefreshToken {
             nullable = false,
             updatable = false,
             foreignKey = @ForeignKey(name = "fk_user_id",
-                    value = ConstraintMode.CONSTRAINT))
+                    value = ConstraintMode.CONSTRAINT,
+            foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES \"user\"(id) ON DELETE CASCADE"))
     private User user;
 
     @CreationTimestamp

@@ -30,7 +30,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getUsers() {
         List<UserResponseDTO> userResponseDTOS = userService.findAll().stream()
-                .map(userMapper::userToUserResponseDTO)
+                .map(userMapper::map)
                 .toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDTOS);
@@ -45,7 +45,7 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         User user = optionalUser.get();
-        UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTO(user);
+        UserResponseDTO userResponseDTO = userMapper.map(user);
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDTO);
     }
 

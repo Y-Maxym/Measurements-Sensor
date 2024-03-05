@@ -16,8 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.maxym.spring.sensor.model.enums.Authorities.*;
-
 
 @Configuration
 @EnableWebSecurity
@@ -36,20 +34,20 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .userDetailsService(authDetailsService)
+                .sessionManagement(managementConfigurer -> managementConfigurer
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers("/login", "/refresh", "/signup").permitAll()
                         .requestMatchers("/users/info").authenticated()
-                        .requestMatchers("/sensors").hasAnyAuthority(READ_SENSOR.name(), PERMIT_ALL.name())
-                        .requestMatchers("/sensors/registration").hasAnyAuthority(CREATE_SENSOR.name(), PERMIT_ALL.name())
-                        .requestMatchers("/measurements").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())
-                        .requestMatchers("/measurements/rainyDaysCount").hasAnyAuthority(READ_MEASUREMENT.name(), PERMIT_ALL.name())
-                        .requestMatchers("/measurements/add").hasAnyAuthority(CREATE_MEASUREMENT.name(), PERMIT_ALL.name())
-                        .requestMatchers("/users/**").hasAnyAuthority(READ_USERS.name(), PERMIT_ALL.name())
-                        .anyRequest().hasAuthority(PERMIT_ALL.name()))
-                .sessionManagement(managementConfigurer -> managementConfigurer
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .userDetailsService(authDetailsService)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                        .requestMatchers("/sensors").hasRole("ADMIN")
+                        .requestMatchers("/sensors/registration").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/measurements").hasRole("ADMIN")
+                        .requestMatchers("/measurements/rainyDaysCount").hasRole("ADMIN")
+                        .requestMatchers("/measurements/add").hasRole("ADMIN")
+                        .requestMatchers("/users/**").hasRole("ADMIN")
+                        .anyRequest().hasRole("ADMIN"))
                 .build();
     }
 
