@@ -19,3 +19,6 @@ logging:
     org:
       springframework:
         security: debug
+
+jwt:
+  duration: 1h
