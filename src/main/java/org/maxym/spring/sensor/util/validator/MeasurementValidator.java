@@ -1,7 +1,7 @@
 package org.maxym.spring.sensor.util.validator;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.MeasurementRequestDTO;
+import org.maxym.spring.sensor.dto.MeasurementRequest;
 import org.maxym.spring.sensor.service.SensorService;
 import org.maxym.spring.sensor.error.FieldErrorResponse;
 import org.maxym.spring.sensor.exception.SensorNotExistException;
@@ -20,14 +20,14 @@ public class MeasurementValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return MeasurementRequestDTO.class.equals(clazz);
+        return MeasurementRequest.class.equals(clazz);
     }
 
     @Override
     public void validate(@NonNull Object target, @NonNull Errors errors) {
-        MeasurementRequestDTO measurementRequestDTO = (MeasurementRequestDTO) target;
+        MeasurementRequest measurementRequest = (MeasurementRequest) target;
 
-        if (sensorService.findByName(measurementRequestDTO.sensor().name()).isEmpty()) {
+        if (sensorService.findByName(measurementRequest.sensor().name()).isEmpty()) {
             errors.rejectValue("sensor", "sensor.exist", "This sensor not exist.");
             throw new SensorNotExistException("An error occurred.", Collections.singletonList(new FieldErrorResponse("sensor", "This sensor not exist.")));
         }

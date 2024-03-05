@@ -2,8 +2,8 @@ package org.maxym.spring.sensor.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.MeasurementRequestDTO;
-import org.maxym.spring.sensor.dto.MeasurementResponseDTO;
+import org.maxym.spring.sensor.dto.MeasurementRequest;
+import org.maxym.spring.sensor.dto.MeasurementResponse;
 import org.maxym.spring.sensor.service.MeasurementService;
 import org.maxym.spring.sensor.util.mapper.MeasurementMapper;
 import org.maxym.spring.sensor.util.validator.MeasurementValidator;
@@ -28,10 +28,10 @@ public class MeasurementController {
 
     @GetMapping
     public ResponseEntity<?> getAllMeasurements() {
-        List<MeasurementResponseDTO> measurementResponseDTOS = measurementService.findAll().stream()
+        List<MeasurementResponse> measurementResponses = measurementService.findAll().stream()
                 .map(measurementMapper::map)
                 .toList();
-        return ResponseEntity.status(HttpStatus.OK).body(measurementResponseDTOS);
+        return ResponseEntity.status(HttpStatus.OK).body(measurementResponses);
     }
 
     @GetMapping("/rainyDaysCount")
@@ -41,7 +41,7 @@ public class MeasurementController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addMeasurement(@RequestBody @Valid MeasurementRequestDTO measurementRequestDTO,
+    public ResponseEntity<?> addMeasurement(@RequestBody @Valid MeasurementRequest measurementRequest,
                                                BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -54,9 +54,9 @@ public class MeasurementController {
             throw new MeasurementCreationException("An error occurred.", errors);
         }
 
-        measurementValidator.validate(measurementRequestDTO, bindingResult);
+        measurementValidator.validate(measurementRequest, bindingResult);
 
-        measurementService.save(measurementMapper.map(measurementRequestDTO));
+        measurementService.save(measurementMapper.map(measurementRequest));
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

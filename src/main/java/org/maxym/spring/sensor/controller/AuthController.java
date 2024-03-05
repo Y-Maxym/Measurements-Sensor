@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.LoginRequest;
-import org.maxym.spring.sensor.dto.UserRequestDTO;
+import org.maxym.spring.sensor.dto.UserRequest;
 import org.maxym.spring.sensor.model.RefreshToken;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.service.JWTService;
@@ -41,9 +41,9 @@ public class AuthController {
     private final UserRequestValidator userRequestValidator;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> createUser(@RequestBody @Validated UserRequestDTO userRequestDTO,
-                                           BindingResult bindingResult,
-                                           HttpServletResponse response) {
+    public ResponseEntity<?> signup(@RequestBody @Validated UserRequest userRequestDTO,
+                                    BindingResult bindingResult,
+                                    HttpServletResponse response) {
 
         userRequestValidator.validate(userRequestDTO, bindingResult);
 

@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.RefreshToken;
 import org.maxym.spring.sensor.model.User;
-import org.maxym.spring.sensor.repository.UserRepository;
 import org.maxym.spring.sensor.repository.RefreshTokenRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,12 +20,12 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     public RefreshToken createRefreshToken(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found:" + username));
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found", username)));
 
         String token = UUID.randomUUID().toString();
 

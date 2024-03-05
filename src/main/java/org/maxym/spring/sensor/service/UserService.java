@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,7 +45,25 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void grantRole(Role role, User user) {
+        user.getRoles().add(role);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void takeRole(Role role, User user) {
+        user.getRoles().remove(role);
+        userRepository.save(user);
+    }
+
+    public boolean hasRole(Role role, User user) {
+        return user.getRoles().contains(role);
+    }
+
     private Set<Role> defaultRoles() {
-        return Set.of(roleService.findByName("ROLE_USER"));
+        return roleService.findByRole("ROLE_USER")
+                .stream()
+                .collect(Collectors.toSet());
     }
 }

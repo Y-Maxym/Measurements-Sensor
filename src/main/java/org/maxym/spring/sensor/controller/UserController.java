@@ -1,8 +1,8 @@
 package org.maxym.spring.sensor.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.UserInfoDTO;
-import org.maxym.spring.sensor.dto.UserResponseDTO;
+import org.maxym.spring.sensor.dto.UserInfo;
+import org.maxym.spring.sensor.dto.UserResponse;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.model.AuthDetails;
 import org.maxym.spring.sensor.service.UserService;
@@ -32,11 +32,11 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
-        List<UserResponseDTO> userResponseDTOS = userService.findAll().stream()
+        List<UserResponse> userResponses = userService.findAll().stream()
                 .map(userMapper::map)
                 .toList();
 
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDTOS);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponses);
     }
 
     @GetMapping("/{id}")
@@ -48,8 +48,8 @@ public class UserController {
             throw new UserNotFoundException("User not found");
         }
         User user = optionalUser.get();
-        UserResponseDTO userResponseDTO = userMapper.map(user);
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDTO);
+        UserResponse userResponse = userMapper.map(user);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
     @GetMapping("/info")
@@ -57,8 +57,8 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AuthDetails details = (AuthDetails) authentication.getPrincipal();
 
-        UserInfoDTO userInfoDTO = userInfoMapper.map(details.user());
+        UserInfo userInfo = userInfoMapper.map(details.user());
 
-        return ResponseEntity.status(HttpStatus.OK).body(userInfoDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(userInfo);
     }
 }

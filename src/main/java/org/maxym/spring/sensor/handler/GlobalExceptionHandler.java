@@ -50,4 +50,9 @@ public class GlobalExceptionHandler {
     private ResponseEntity<String> handleException(UserNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    private ResponseEntity<String> handleException(RoleNotFoundException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

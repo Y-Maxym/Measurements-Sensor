@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/measurements/rainyDaysCount").hasRole("ADMIN")
                         .requestMatchers("/measurements/add").hasRole("ADMIN")
                         .requestMatchers("/users/**").hasRole("ADMIN")
+                        .requestMatchers("/role/**").hasRole("ADMIN")
                         .anyRequest().hasRole("ADMIN"))
                 .build();
     }

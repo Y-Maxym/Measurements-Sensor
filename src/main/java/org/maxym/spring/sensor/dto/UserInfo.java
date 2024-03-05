@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class UserInfoDTO {
+public class UserInfo {
     private String username;
     private String email;
     private LocalDateTime createdAt;

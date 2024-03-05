@@ -1,7 +1,5 @@
 package org.maxym.spring.sensor.model;
 
-import org.maxym.spring.sensor.model.Role;
-import org.maxym.spring.sensor.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +11,7 @@ public record AuthDetails(User user) implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles().stream()
-                .map(Role::getName)
+                .map(Role::getRole)
                 .map(SimpleGrantedAuthority::new)
                 .toList();
     }

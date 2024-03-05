@@ -1,7 +1,7 @@
 package org.maxym.spring.sensor.util.validator;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.SensorRequestDTO;
+import org.maxym.spring.sensor.dto.SensorRequest;
 import org.maxym.spring.sensor.service.SensorService;
 import org.maxym.spring.sensor.error.FieldErrorResponse;
 import org.maxym.spring.sensor.exception.SensorAlreadyExistException;
@@ -20,14 +20,14 @@ public class SensorValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return SensorRequestDTO.class.equals(clazz);
+        return SensorRequest.class.equals(clazz);
     }
 
     @Override
     public void validate(@NonNull Object target,
                          @NonNull Errors errors) {
 
-        SensorRequestDTO sensor = (SensorRequestDTO) target;
+        SensorRequest sensor = (SensorRequest) target;
 
         if (sensorService.findByName(sensor.name()).isPresent()) {
             errors.rejectValue("name", "sensor.exist", "This sensor is already exist.");
