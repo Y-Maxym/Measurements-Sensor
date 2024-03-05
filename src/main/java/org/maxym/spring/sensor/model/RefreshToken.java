@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "refresh_token", schema = "public",
         indexes = {
-                @Index(name = "idx_user_id", columnList = "user_id"),
-                @Index(name = "idx_token", columnList = "token")
+                @Index(name = "idx_refresh_token_user_id", columnList = "user_id"),
+                @Index(name = "idx_refresh_token_token", columnList = "token")
         }
 )
 @Data
@@ -39,7 +39,7 @@ public class RefreshToken {
             referencedColumnName = "id",
             nullable = false,
             updatable = false,
-            foreignKey = @ForeignKey(name = "fk_user_id",
+            foreignKey = @ForeignKey(name = "fk_refresh_token_user_id",
                     value = ConstraintMode.CONSTRAINT,
             foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES \"user\"(id) ON DELETE CASCADE"))
     private User user;

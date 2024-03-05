@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "sensor",
         schema = "public",
-        uniqueConstraints = @UniqueConstraint(name = "unique_name", columnNames = "name"),
-        indexes = @Index(name = "idx_name", columnList = "name", unique = true))
+        uniqueConstraints = @UniqueConstraint(name = "unique_sensor_name", columnNames = "name"),
+        indexes = @Index(name = "idx_sensor_name", columnList = "name", unique = true))
 @Data
 public class Sensor {
 

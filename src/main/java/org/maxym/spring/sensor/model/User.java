@@ -11,10 +11,10 @@ import java.util.Set;
 @Entity
 @Table(name = "\"user\"", schema = "public",
         uniqueConstraints = {
-                @UniqueConstraint(name = "unique_username", columnNames = "username"),
-                @UniqueConstraint(name = "unique_email", columnNames = "email")
+                @UniqueConstraint(name = "unique_user_username", columnNames = "username"),
+                @UniqueConstraint(name = "unique_user_email", columnNames = "email")
         },
-        indexes = @Index(name = "idx_username", columnList = "username", unique = true))
+        indexes = @Index(name = "idx_user_username", columnList = "username", unique = true))
 @Data
 public class User {
 
@@ -41,10 +41,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id",
                     referencedColumnName = "id",
                     nullable = false),
-            foreignKey = @ForeignKey(name = "fk_user_id",
+            foreignKey = @ForeignKey(name = "fk_user_role_user_id",
                     value = ConstraintMode.CONSTRAINT,
                     foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES \"user\"(id) ON DELETE CASCADE"),
-            inverseForeignKey = @ForeignKey(name = "fk_role_id",
+            inverseForeignKey = @ForeignKey(name = "fk_user_role_role_id",
                     value = ConstraintMode.CONSTRAINT,
                     foreignKeyDefinition = "FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE"))
     private Set<Role> roles;

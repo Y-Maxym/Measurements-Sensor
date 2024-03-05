@@ -28,7 +28,7 @@ public class Measurement {
     @JoinColumn(name = "sensor_id", referencedColumnName = "id",
             nullable = false,
             updatable = false,
-            foreignKey = @ForeignKey(name = "fk_sensor_id",
+            foreignKey = @ForeignKey(name = "fk_measurement_sensor_id",
                     value = ConstraintMode.CONSTRAINT,
                     foreignKeyDefinition = "FOREIGN KEY (sensor_id) REFERENCES sensor(id) ON DELETE CASCADE"))
     private Sensor sensor;

@@ -6,8 +6,8 @@ import lombok.Data;
 @Entity
 @Table(name = "role",
         schema = "public",
-        uniqueConstraints = @UniqueConstraint(name = "unique_name", columnNames = "name"),
-        indexes = @Index(name = "idx_name", columnList = "name", unique = true))
+        uniqueConstraints = @UniqueConstraint(name = "unique_role_name", columnNames = "name"),
+        indexes = @Index(name = "idx_role_name", columnList = "name", unique = true))
 @Data
 public class Role {
 
