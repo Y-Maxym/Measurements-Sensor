@@ -1,7 +1,7 @@
-package org.maxym.spring.sensor.util.handler;
+package org.maxym.spring.sensor.handler;
 
-import org.maxym.spring.sensor.util.responce.error.ErrorResponse;
-import org.maxym.spring.sensor.util.responce.exception.*;
+import org.maxym.spring.sensor.error.ErrorResponse;
+import org.maxym.spring.sensor.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -44,5 +44,10 @@ public class GlobalExceptionHandler {
     private ResponseEntity<ErrorResponse> handleException(SensorAlreadyExistException exception) {
         ErrorResponse response = new ErrorResponse("An error occurred.", exception.getErrors(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    private ResponseEntity<String> handleException(UserNotFoundException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

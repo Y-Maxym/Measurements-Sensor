@@ -1,9 +1,11 @@
 package org.maxym.spring.sensor.util.mapper;
 
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.maxym.spring.sensor.dto.MeasurementDTO;
+import org.maxym.spring.sensor.dto.MeasurementRequestDTO;
+import org.maxym.spring.sensor.dto.MeasurementResponseDTO;
 import org.maxym.spring.sensor.model.Measurement;
 import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.SensorService;
@@ -16,11 +18,12 @@ public abstract class MeasurementMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "measurementDate", ignore = true)
-    @Mapping(source = "sensor.name", target = "sensor", qualifiedByName = "mappingSensor")
+    @Mapping(target = "sensor", source = "sensor.name", qualifiedByName = "mappingSensor")
     @Mapping(target = "updatedAt", ignore = true)
-    abstract public Measurement measurementDTOToMeasurement(MeasurementDTO measurementDTO);
+    abstract public Measurement map(MeasurementRequestDTO measurementRequestDTO);
 
-    abstract public MeasurementDTO measurementToMeasurementDTO(Measurement measurement);
+    @InheritConfiguration
+    abstract public MeasurementResponseDTO map(Measurement measurement);
 
     @Named("mappingSensor")
     protected Sensor mappingSensor(String name) {

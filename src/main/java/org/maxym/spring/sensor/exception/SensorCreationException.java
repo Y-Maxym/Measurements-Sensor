@@ -1,7 +1,7 @@
-package org.maxym.spring.sensor.util.responce.exception;
+package org.maxym.spring.sensor.exception;
 
 import lombok.Getter;
-import org.maxym.spring.sensor.util.responce.error.FieldErrorResponse;
+import org.maxym.spring.sensor.error.FieldErrorResponse;
 
 import java.util.List;
 

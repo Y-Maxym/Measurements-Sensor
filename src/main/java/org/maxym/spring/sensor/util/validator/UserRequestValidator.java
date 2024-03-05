@@ -1,4 +1,4 @@
-package org.maxym.spring.sensor.util.request.validator;
+package org.maxym.spring.sensor.util.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.UserRequestDTO;
@@ -26,8 +26,8 @@ public class UserRequestValidator implements Validator {
     public void validate(@NonNull Object target, @NonNull Errors errors) {
         UserRequestDTO dto = (UserRequestDTO) target;
 
-        Optional<User> byUsername = userService.findByUsername(dto.getUsername());
-        Optional<User> byEmail = userService.findByEmail(dto.getEmail());
+        Optional<User> byUsername = userService.findByUsername(dto.username());
+        Optional<User> byEmail = userService.findByEmail(dto.email());
 
         if (byUsername.isPresent()) {
             errors.rejectValue("username", "user.username.exist", "This username is already taken.");

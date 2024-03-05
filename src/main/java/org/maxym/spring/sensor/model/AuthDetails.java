@@ -1,7 +1,5 @@
-package org.maxym.spring.sensor.security.model;
+package org.maxym.spring.sensor.model;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.Role;
 import org.maxym.spring.sensor.model.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,11 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-@RequiredArgsConstructor
-@Getter
-public class AuthDetails implements UserDetails {
-
-    private final User user;
+public record AuthDetails(User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

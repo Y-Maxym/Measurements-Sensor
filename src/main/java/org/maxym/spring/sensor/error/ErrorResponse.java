@@ -1,4 +1,4 @@
-package org.maxym.spring.sensor.util.responce.error;
+package org.maxym.spring.sensor.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

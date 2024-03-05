@@ -8,13 +8,13 @@ import org.maxym.spring.sensor.dto.LoginRequest;
 import org.maxym.spring.sensor.dto.UserRequestDTO;
 import org.maxym.spring.sensor.model.RefreshToken;
 import org.maxym.spring.sensor.model.User;
-import org.maxym.spring.sensor.security.service.JWTService;
-import org.maxym.spring.sensor.security.service.RefreshTokenService;
+import org.maxym.spring.sensor.service.JWTService;
+import org.maxym.spring.sensor.service.RefreshTokenService;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.UserMapper;
-import org.maxym.spring.sensor.util.request.validator.UserRequestValidator;
-import org.maxym.spring.sensor.util.responce.error.FieldErrorResponse;
-import org.maxym.spring.sensor.util.responce.exception.UserCreationException;
+import org.maxym.spring.sensor.util.validator.UserRequestValidator;
+import org.maxym.spring.sensor.error.FieldErrorResponse;
+import org.maxym.spring.sensor.exception.UserCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,7 +41,7 @@ public class AuthController {
     private final UserRequestValidator userRequestValidator;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> createUser(@RequestBody @Validated UserRequestDTO userRequestDTO,
+    public ResponseEntity<?> createUser(@RequestBody @Validated UserRequestDTO userRequestDTO,
                                            BindingResult bindingResult,
                                            HttpServletResponse response) {
 
@@ -60,8 +60,8 @@ public class AuthController {
         User user = userMapper.map(userRequestDTO);
         userService.save(user);
 
-        String accessToken = JWTService.generateToken(userRequestDTO.getUsername());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userRequestDTO.getUsername());
+        String accessToken = JWTService.generateToken(userRequestDTO.username());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userRequestDTO.username());
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken.getToken());
         refreshTokenCookie.setHttpOnly(true);
@@ -76,11 +76,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest,
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest,
                                         HttpServletResponse response) {
 
-        String username = loginRequest.getUsername();
-        String password = loginRequest.getPassword();
+        String username = loginRequest.username();
+        String password = loginRequest.password();
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
@@ -108,10 +108,12 @@ public class AuthController {
                 .map(Cookie::getValue)
                 .orElse(null);
 
+        // TODO: implement exception
         if (refreshToken == null || !refreshTokenService.validateRefreshToken(refreshToken)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Refresh Token");
         }
 
+        // TODO: implement exception
         String username = refreshTokenService.findUsernameByToken(refreshToken);
         if (username == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refresh Token is not linked to any user");

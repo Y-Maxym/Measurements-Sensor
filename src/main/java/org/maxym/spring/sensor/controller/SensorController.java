@@ -1,14 +1,15 @@
 package org.maxym.spring.sensor.controller;
 
 import jakarta.validation.Valid;
-import org.maxym.spring.sensor.dto.SensorDTO;
+import lombok.RequiredArgsConstructor;
+import org.maxym.spring.sensor.dto.SensorRequestDTO;
+import org.maxym.spring.sensor.dto.SensorResponseDTO;
 import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.SensorService;
 import org.maxym.spring.sensor.util.mapper.SensorMapper;
-import org.maxym.spring.sensor.util.request.validator.SensorValidator;
-import org.maxym.spring.sensor.util.responce.error.FieldErrorResponse;
-import org.maxym.spring.sensor.util.responce.exception.SensorCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.maxym.spring.sensor.util.validator.SensorValidator;
+import org.maxym.spring.sensor.error.FieldErrorResponse;
+import org.maxym.spring.sensor.exception.SensorCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,31 +21,25 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/sensors")
+@RequiredArgsConstructor
 public class SensorController {
 
     private final SensorService sensorService;
     private final SensorValidator sensorValidator;
     private final SensorMapper sensorMapper;
 
-    @Autowired
-    public SensorController(SensorService sensorService, SensorValidator sensorValidator, SensorMapper sensorMapper) {
-        this.sensorService = sensorService;
-        this.sensorValidator = sensorValidator;
-        this.sensorMapper = sensorMapper;
-    }
-
     @GetMapping
-    public ResponseEntity<List<SensorDTO>> getAllSensors() {
+    public ResponseEntity<?> getAllSensors() {
         List<Sensor> sensors = sensorService.findAll();
-        List<SensorDTO> sensorDTOs = sensors.stream()
-                .map(sensorMapper::sensorToSensorDTO)
+        List<SensorResponseDTO> sensorResponseDTOS = sensors.stream()
+                .map(sensorMapper::map)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(sensorDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(sensorResponseDTOS, HttpStatus.OK);
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<Void> registrationNewSensor(@RequestBody @Valid SensorDTO sensorDTO,
+    public ResponseEntity<?> registrationNewSensor(@RequestBody @Valid SensorRequestDTO sensorRequestDTO,
                                                       BindingResult bindingResult) {
 
 
@@ -58,9 +53,9 @@ public class SensorController {
             throw new SensorCreationException("An error occurred.", errors);
         }
 
-        sensorValidator.validate(sensorDTO, bindingResult);
+        sensorValidator.validate(sensorRequestDTO, bindingResult);
 
-        sensorService.save(sensorMapper.sensorDTOToSensor(sensorDTO));
+        sensorService.save(sensorMapper.map(sensorRequestDTO));
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

@@ -1,13 +1,14 @@
 package org.maxym.spring.sensor.controller;
 
 import jakarta.validation.Valid;
-import org.maxym.spring.sensor.dto.MeasurementDTO;
+import lombok.RequiredArgsConstructor;
+import org.maxym.spring.sensor.dto.MeasurementRequestDTO;
+import org.maxym.spring.sensor.dto.MeasurementResponseDTO;
 import org.maxym.spring.sensor.service.MeasurementService;
 import org.maxym.spring.sensor.util.mapper.MeasurementMapper;
-import org.maxym.spring.sensor.util.request.validator.MeasurementValidator;
-import org.maxym.spring.sensor.util.responce.error.FieldErrorResponse;
-import org.maxym.spring.sensor.util.responce.exception.MeasurementCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.maxym.spring.sensor.util.validator.MeasurementValidator;
+import org.maxym.spring.sensor.error.FieldErrorResponse;
+import org.maxym.spring.sensor.exception.MeasurementCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,35 +19,29 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/measurements")
+@RequiredArgsConstructor
 public class MeasurementController {
 
     private final MeasurementService measurementService;
     private final MeasurementMapper measurementMapper;
     private final MeasurementValidator measurementValidator;
 
-    @Autowired
-    public MeasurementController(MeasurementService measurementService, MeasurementMapper measurementMapper, MeasurementValidator measurementValidator) {
-        this.measurementService = measurementService;
-        this.measurementMapper = measurementMapper;
-        this.measurementValidator = measurementValidator;
-    }
-
     @GetMapping
-    public ResponseEntity<List<MeasurementDTO>> getAllMeasurements() {
-        List<MeasurementDTO> measurementDTOS = measurementService.findAll().stream()
-                .map(measurementMapper::measurementToMeasurementDTO)
+    public ResponseEntity<?> getAllMeasurements() {
+        List<MeasurementResponseDTO> measurementResponseDTOS = measurementService.findAll().stream()
+                .map(measurementMapper::map)
                 .toList();
-        return ResponseEntity.status(HttpStatus.OK).body(measurementDTOS);
+        return ResponseEntity.status(HttpStatus.OK).body(measurementResponseDTOS);
     }
 
     @GetMapping("/rainyDaysCount")
-    public ResponseEntity<Long> getCountRainyDays() {
+    public ResponseEntity<?> getCountRainyDays() {
         Long rainyDays = measurementService.countAllByRainingTrue();
         return ResponseEntity.status(HttpStatus.OK).body(rainyDays);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Void> addMeasurement(@RequestBody @Valid MeasurementDTO measurementDTO,
+    public ResponseEntity<?> addMeasurement(@RequestBody @Valid MeasurementRequestDTO measurementRequestDTO,
                                                BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
@@ -59,9 +54,9 @@ public class MeasurementController {
             throw new MeasurementCreationException("An error occurred.", errors);
         }
 
-        measurementValidator.validate(measurementDTO, bindingResult);
+        measurementValidator.validate(measurementRequestDTO, bindingResult);
 
-        measurementService.save(measurementMapper.measurementDTOToMeasurement(measurementDTO));
+        measurementService.save(measurementMapper.map(measurementRequestDTO));
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

@@ -1,4 +1,4 @@
-package org.maxym.spring.sensor.util.responce.exception;
+package org.maxym.spring.sensor.exception;
 
 public class RoleNotFoundException extends RuntimeException{
 }

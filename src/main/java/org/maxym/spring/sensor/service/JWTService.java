@@ -1,4 +1,4 @@
-package org.maxym.spring.sensor.security.service;
+package org.maxym.spring.sensor.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

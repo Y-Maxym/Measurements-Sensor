@@ -1,4 +1,4 @@
-package org.maxym.spring.sensor.security.service;
+package org.maxym.spring.sensor.service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.RefreshToken;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.repository.UserRepository;
-import org.maxym.spring.sensor.security.repository.RefreshTokenRepository;
+import org.maxym.spring.sensor.repository.RefreshTokenRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

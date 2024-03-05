@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "refresh_token", schema = "public",
+        uniqueConstraints = @UniqueConstraint(name = "unique_refresh_token_user_id", columnNames = "user_id"),
         indexes = {
                 @Index(name = "idx_refresh_token_user_id", columnList = "user_id"),
                 @Index(name = "idx_refresh_token_token", columnList = "token")

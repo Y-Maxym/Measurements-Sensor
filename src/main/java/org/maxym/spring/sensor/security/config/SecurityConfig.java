@@ -2,7 +2,7 @@ package org.maxym.spring.sensor.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.security.filter.JWTFilter;
-import org.maxym.spring.sensor.security.service.AuthDetailsService;
+import org.maxym.spring.sensor.service.AuthDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
