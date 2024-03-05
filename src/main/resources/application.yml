@@ -14,10 +14,6 @@ spring:
     hibernate:
       ddl-auto: update
 
-  sql:
-    init:
-      mode: embedded
-
 logging:
   level:
     org:
