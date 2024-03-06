@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 public class SensorCreationException extends ApplicationException {
 
-    public SensorCreationException(String message, List<FieldErrorResponse> errors) {
-        super(message, errors);
+    public SensorCreationException(List<FieldErrorResponse> errors) {
+        super("Sensor creation error", errors);
     }
 }

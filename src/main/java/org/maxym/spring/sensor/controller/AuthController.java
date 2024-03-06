@@ -6,10 +6,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.LoginRequest;
 import org.maxym.spring.sensor.dto.UserRequest;
-import org.maxym.spring.sensor.error.FieldErrorResponse;
 import org.maxym.spring.sensor.exception.RefreshTokenException;
 import org.maxym.spring.sensor.exception.UserCreationException;
 import org.maxym.spring.sensor.model.User;
+import org.maxym.spring.sensor.service.BindingResultService;
 import org.maxym.spring.sensor.service.JWTService;
 import org.maxym.spring.sensor.service.RefreshTokenService;
 import org.maxym.spring.sensor.service.UserService;
@@ -25,43 +25,33 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
 
     private final UserService userService;
-    private final JWTService JWTService;
-    private final RefreshTokenService refreshTokenService;
-    private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final UserRequestValidator userRequestValidator;
+    private final JWTService JWTService;
+    private final RefreshTokenService refreshTokenService;
+    private final BindingResultService bindingResultService;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Validated UserRequest userRequestDTO,
+    public ResponseEntity<?> signup(@RequestBody @Validated UserRequest userRequest,
                                     BindingResult bindingResult,
                                     HttpServletResponse response) {
 
-        userRequestValidator.validate(userRequestDTO, bindingResult);
+        userRequestValidator.validate(userRequest, bindingResult);
+        bindingResultService.handle(bindingResult, UserCreationException::new);
 
-        if (bindingResult.hasErrors()) {
-            List<FieldErrorResponse> errors = new ArrayList<>();
-
-            bindingResult.getFieldErrors().stream()
-                    .map(FieldErrorResponse::new)
-                    .forEach(errors::add);
-
-            throw new UserCreationException("An error occurred.", errors);
-        }
-
-        User user = userMapper.map(userRequestDTO);
+        User user = userMapper.map(userRequest);
         userService.save(user);
 
-        String accessToken = JWTService.generateToken(userRequestDTO.username());
-        String refreshToken = refreshTokenService.generateToken(userRequestDTO.username()).getToken();
+        String accessToken = JWTService.generateToken(userRequest.username());
+        String refreshToken = refreshTokenService.generateToken(userRequest.username()).getToken();
 
         refreshTokenService.addRTokenToCookies(refreshToken, response);
         response.setHeader("Authorization", "Bearer " + accessToken);

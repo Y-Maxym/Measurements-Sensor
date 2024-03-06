@@ -12,6 +12,7 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: update
+    open-in-view: true
 
   jackson:
     property-naming-strategy: SNAKE_CASE

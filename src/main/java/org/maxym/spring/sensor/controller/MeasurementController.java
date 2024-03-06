@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.MeasurementRequest;
 import org.maxym.spring.sensor.dto.MeasurementResponse;
-import org.maxym.spring.sensor.error.FieldErrorResponse;
 import org.maxym.spring.sensor.exception.MeasurementCreationException;
+import org.maxym.spring.sensor.service.BindingResultService;
 import org.maxym.spring.sensor.service.MeasurementService;
 import org.maxym.spring.sensor.util.mapper.MeasurementMapper;
 import org.maxym.spring.sensor.util.validator.MeasurementValidator;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,6 +24,7 @@ public class MeasurementController {
     private final MeasurementService measurementService;
     private final MeasurementMapper measurementMapper;
     private final MeasurementValidator measurementValidator;
+    private final BindingResultService bindingResultService;
 
     @GetMapping
     public ResponseEntity<?> getAllMeasurements() {
@@ -44,17 +44,8 @@ public class MeasurementController {
     public ResponseEntity<?> addMeasurement(@RequestBody @Valid MeasurementRequest measurementRequest,
                                             BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            List<FieldErrorResponse> errors = new ArrayList<>();
-
-            bindingResult.getFieldErrors().stream()
-                    .map(FieldErrorResponse::new)
-                    .forEach(errors::add);
-
-            throw new MeasurementCreationException("An error occurred.", errors);
-        }
-
         measurementValidator.validate(measurementRequest, bindingResult);
+        bindingResultService.handle(bindingResult, MeasurementCreationException::new);
 
         measurementService.save(measurementMapper.map(measurementRequest));
 
