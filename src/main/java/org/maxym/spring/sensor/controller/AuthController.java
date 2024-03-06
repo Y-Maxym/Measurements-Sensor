@@ -6,15 +6,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.LoginRequest;
 import org.maxym.spring.sensor.dto.UserRequest;
-import org.maxym.spring.sensor.model.RefreshToken;
+import org.maxym.spring.sensor.error.FieldErrorResponse;
+import org.maxym.spring.sensor.exception.RefreshTokenException;
+import org.maxym.spring.sensor.exception.UserCreationException;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.service.JWTService;
 import org.maxym.spring.sensor.service.RefreshTokenService;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.UserMapper;
 import org.maxym.spring.sensor.util.validator.UserRequestValidator;
-import org.maxym.spring.sensor.error.FieldErrorResponse;
-import org.maxym.spring.sensor.exception.UserCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -61,15 +61,9 @@ public class AuthController {
         userService.save(user);
 
         String accessToken = JWTService.generateToken(userRequestDTO.username());
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userRequestDTO.username());
+        String refreshToken = refreshTokenService.generateToken(userRequestDTO.username()).getToken();
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken.getToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-
-        response.addCookie(refreshTokenCookie);
+        refreshTokenService.addRTokenToCookies(refreshToken, response);
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -77,7 +71,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest,
-                                        HttpServletResponse response) {
+                                   HttpServletResponse response) {
 
         String username = loginRequest.username();
         String password = loginRequest.password();
@@ -86,12 +80,10 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(username, password));
 
         refreshTokenService.deleteByUser_Username(username);
-
         String accessToken = JWTService.generateToken(username);
-        String refreshToken = refreshTokenService.createRefreshToken(username).getToken();
+        String refreshToken = refreshTokenService.generateToken(username).getToken();
 
-        refreshTokenService.addRefreshTokenToResponse(refreshToken, response);
-
+        refreshTokenService.addRTokenToCookies(refreshToken, response);
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         return ResponseEntity.status(HttpStatus.OK).body("User authenticated successfully");
@@ -108,24 +100,20 @@ public class AuthController {
                 .map(Cookie::getValue)
                 .orElse(null);
 
-        // TODO: implement exception
-        if (refreshToken == null || !refreshTokenService.validateRefreshToken(refreshToken)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Refresh Token");
+        if (refreshToken == null || !refreshTokenService.validateToken(refreshToken)) {
+            throw new RefreshTokenException("Invalid Refresh Token");
         }
 
-        // TODO: implement exception
         String username = refreshTokenService.findUsernameByToken(refreshToken);
         if (username == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Refresh Token is not linked to any user");
+            throw new RefreshTokenException("Refresh Token is not linked to any user");
         }
 
         refreshTokenService.deleteByToken(refreshToken);
-
-        String newRefreshToken = refreshTokenService.createRefreshToken(username).getToken();
+        String newRefreshToken = refreshTokenService.generateToken(username).getToken();
         String accessToken = JWTService.generateToken(username);
 
-        refreshTokenService.addRefreshTokenToResponse(newRefreshToken, response);
-
+        refreshTokenService.addRTokenToCookies(newRefreshToken, response);
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Refresh successful");

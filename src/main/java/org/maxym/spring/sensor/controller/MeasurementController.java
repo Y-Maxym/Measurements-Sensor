@@ -4,11 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.MeasurementRequest;
 import org.maxym.spring.sensor.dto.MeasurementResponse;
+import org.maxym.spring.sensor.error.FieldErrorResponse;
+import org.maxym.spring.sensor.exception.MeasurementCreationException;
 import org.maxym.spring.sensor.service.MeasurementService;
 import org.maxym.spring.sensor.util.mapper.MeasurementMapper;
 import org.maxym.spring.sensor.util.validator.MeasurementValidator;
-import org.maxym.spring.sensor.error.FieldErrorResponse;
-import org.maxym.spring.sensor.exception.MeasurementCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -42,7 +42,7 @@ public class MeasurementController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addMeasurement(@RequestBody @Valid MeasurementRequest measurementRequest,
-                                               BindingResult bindingResult) {
+                                            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             List<FieldErrorResponse> errors = new ArrayList<>();

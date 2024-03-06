@@ -55,4 +55,9 @@ public class GlobalExceptionHandler {
     private ResponseEntity<String> handleException(RoleNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(RefreshTokenException.class)
+    private ResponseEntity<String> handleException(RefreshTokenException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

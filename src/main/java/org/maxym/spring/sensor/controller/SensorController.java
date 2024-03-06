@@ -4,12 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.SensorRequest;
 import org.maxym.spring.sensor.dto.SensorResponse;
+import org.maxym.spring.sensor.error.FieldErrorResponse;
+import org.maxym.spring.sensor.exception.SensorCreationException;
 import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.SensorService;
 import org.maxym.spring.sensor.util.mapper.SensorMapper;
 import org.maxym.spring.sensor.util.validator.SensorValidator;
-import org.maxym.spring.sensor.error.FieldErrorResponse;
-import org.maxym.spring.sensor.exception.SensorCreationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -40,7 +40,7 @@ public class SensorController {
 
     @PostMapping("/registration")
     public ResponseEntity<?> registrationNewSensor(@RequestBody @Valid SensorRequest sensorRequest,
-                                                      BindingResult bindingResult) {
+                                                   BindingResult bindingResult) {
 
 
         if (bindingResult.hasErrors()) {

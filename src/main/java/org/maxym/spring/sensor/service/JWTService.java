@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
@@ -16,9 +15,9 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JWTService {
 
+    private final SecretKey key = Jwts.SIG.HS256.key().build();
     @Value("${jwt.duration}")
     private Duration duration;
-    private final SecretKey key = Jwts.SIG.HS256.key().build();
 
     public String generateToken(String username) {
         return Jwts.builder()

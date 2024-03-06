@@ -3,7 +3,6 @@ package org.maxym.spring.sensor.dto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-
 public record SensorRequest(
 
         @NotEmpty(message = "Sensor name should not be empty")

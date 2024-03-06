@@ -23,7 +23,7 @@ public class RefreshTokenService {
     private final UserService userService;
 
     @Transactional
-    public RefreshToken createRefreshToken(String username) {
+    public RefreshToken generateToken(String username) {
         User user = userService.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found", username)));
 
@@ -38,7 +38,7 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
-    public boolean validateRefreshToken(String token) {
+    public boolean validateToken(String token) {
         Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByToken(token);
         if (refreshTokenOptional.isPresent()) {
             RefreshToken refreshToken = refreshTokenOptional.get();
@@ -61,7 +61,7 @@ public class RefreshTokenService {
         return refreshTokenRepository.findUsernameByToken(token);
     }
 
-    public void addRefreshTokenToResponse(String refreshToken, HttpServletResponse response) {
+    public void addRTokenToCookies(String refreshToken, HttpServletResponse response) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);

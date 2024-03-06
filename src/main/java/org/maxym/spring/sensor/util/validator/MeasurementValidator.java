@@ -2,9 +2,9 @@ package org.maxym.spring.sensor.util.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.MeasurementRequest;
-import org.maxym.spring.sensor.service.SensorService;
 import org.maxym.spring.sensor.error.FieldErrorResponse;
 import org.maxym.spring.sensor.exception.SensorNotExistException;
+import org.maxym.spring.sensor.service.SensorService;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
