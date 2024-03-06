@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/login", "/refresh", "/signup").permitAll()
+                        .requestMatchers("/login", "/logout", "/refresh", "/signup").permitAll()
                         .requestMatchers("/users/info").authenticated()
                         .requestMatchers("/sensors").hasRole("ADMIN")
                         .requestMatchers("/sensors/registration").hasAnyRole("ADMIN", "USER")

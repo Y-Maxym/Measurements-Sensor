@@ -61,6 +61,7 @@ public class RefreshTokenService {
         return refreshTokenRepository.findUsernameByToken(token);
     }
 
+    // TODO: to token service
     public void addRTokenToCookies(String refreshToken, HttpServletResponse response) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);

@@ -9,10 +9,7 @@ import org.maxym.spring.sensor.dto.UserRequest;
 import org.maxym.spring.sensor.exception.RefreshTokenException;
 import org.maxym.spring.sensor.exception.UserCreationException;
 import org.maxym.spring.sensor.model.User;
-import org.maxym.spring.sensor.service.BindingResultService;
-import org.maxym.spring.sensor.service.JWTService;
-import org.maxym.spring.sensor.service.RefreshTokenService;
-import org.maxym.spring.sensor.service.UserService;
+import org.maxym.spring.sensor.service.*;
 import org.maxym.spring.sensor.util.mapper.UserMapper;
 import org.maxym.spring.sensor.util.validator.UserRequestValidator;
 import org.springframework.http.HttpStatus;
@@ -36,6 +33,7 @@ public class AuthController {
     private final UserRequestValidator userRequestValidator;
     private final JWTService JWTService;
     private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
     private final BindingResultService bindingResultService;
     private final AuthenticationManager authenticationManager;
 
@@ -78,6 +76,13 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK).body("User authenticated successfully");
 
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        tokenService.deleteCookie("refreshToken", response);
+        tokenService.deleteHeader("Authorization", response);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/refresh")
