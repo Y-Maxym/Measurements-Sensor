@@ -15,7 +15,7 @@ public record UserRequest(
         String password,
 
         @NotEmpty(message = "Email should not be empty")
-        @Email(regexp = ".+@gmail\\.(com|ua)")
+        @Email(regexp = ".+@(gmail.com|.+.ua)")
         String email
 ) {
 }

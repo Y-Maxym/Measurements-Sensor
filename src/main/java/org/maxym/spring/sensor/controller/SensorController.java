@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.SensorRequest;
 import org.maxym.spring.sensor.dto.SensorResponse;
 import org.maxym.spring.sensor.exception.SensorCreationException;
-import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.BindingResultService;
 import org.maxym.spring.sensor.service.SensorService;
 import org.maxym.spring.sensor.util.mapper.SensorMapper;
@@ -30,8 +29,10 @@ public class SensorController {
 
     @GetMapping
     public ResponseEntity<?> getAllSensors() {
-        List<Sensor> sensors = sensorService.findAll();
-        List<SensorResponse> sensorResponses = sensors.stream()
+
+        // TODO: map list
+        List<SensorResponse> sensorResponses = sensorService.findAll()
+                .stream()
                 .map(sensorMapper::map)
                 .collect(Collectors.toList());
 

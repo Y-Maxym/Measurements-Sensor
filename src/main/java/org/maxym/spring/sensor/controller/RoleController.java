@@ -27,7 +27,9 @@ public class RoleController {
 
     @GetMapping
     public ResponseEntity<?> getAllRoles() {
-        List<RoleResponse> roles = roleService.findAll().stream()
+
+        List<RoleResponse> roles = roleService.findAll()
+                .stream()
                 .map(roleMapper::map)
                 .toList();
 
@@ -37,11 +39,16 @@ public class RoleController {
     @PostMapping("/grant")
     public ResponseEntity<?> grantRole(@RequestBody UserRole userRole) {
 
-        User user = userService.findByUsername(userRole.username())
-                .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", userRole.username())));
+        String username = userRole.username();
+        String roleName = userRole.role();
 
-        Role role = roleService.findByRole(userRole.role())
-                .orElseThrow(() -> new RoleNotFoundException(String.format("Role %s not found", userRole.role())));
+        // TODO: validator
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", username)));
+
+        // TODO: validator
+        Role role = roleService.findByRole(roleName)
+                .orElseThrow(() -> new RoleNotFoundException(String.format("Role %s not found", roleName)));
 
         userService.grantRole(role, user);
 
@@ -51,14 +58,20 @@ public class RoleController {
     @PostMapping("/take")
     public ResponseEntity<?> takeRole(@RequestBody UserRole userRole) {
 
-        User user = userService.findByUsername(userRole.username())
-                .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", userRole.username())));
+        String username = userRole.username();
+        String roleName = userRole.role();
 
-        Role role = roleService.findByRole(userRole.role())
-                .orElseThrow(() -> new RoleNotFoundException(String.format("Role %s not found", userRole.role())));
+        // TODO: validator
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", username)));
 
+        // TODO: validator
+        Role role = roleService.findByRole(roleName)
+                .orElseThrow(() -> new RoleNotFoundException(String.format("Role %s not found", roleName)));
+
+        // TODO: validator
         if (!userService.hasRole(role, user)) {
-            throw new RoleNotFoundException(String.format("User %s does not have %s role", userRole.username(), userRole.role()));
+            throw new RoleNotFoundException(String.format("User %s does not have %s role", username, roleName));
         }
 
         userService.takeRole(role, user);

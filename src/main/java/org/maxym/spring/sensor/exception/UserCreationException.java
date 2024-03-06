@@ -6,6 +6,6 @@ import java.util.List;
 
 public class UserCreationException extends ApplicationException {
     public UserCreationException(List<FieldErrorResponse> errors) {
-        super("An error occurred.", errors);
+        super("User creation error", errors);
     }
 }

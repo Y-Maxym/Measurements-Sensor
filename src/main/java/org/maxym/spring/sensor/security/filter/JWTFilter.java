@@ -48,11 +48,12 @@ public class JWTFilter extends OncePerRequestFilter {
                             userDetails.getAuthorities()
                     );
 
-                    if (JWTService.validateToken(token, username))
+                    if (JWTService.isValid(token, username))
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
             filterChain.doFilter(request, response);
+            //TODO: handle
         } catch (SignatureException exception) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");

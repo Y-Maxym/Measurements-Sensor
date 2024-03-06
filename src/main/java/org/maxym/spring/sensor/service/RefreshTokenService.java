@@ -1,7 +1,5 @@
 package org.maxym.spring.sensor.service;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.RefreshToken;
 import org.maxym.spring.sensor.model.User;
@@ -23,7 +21,7 @@ public class RefreshTokenService {
     private final UserService userService;
 
     @Transactional
-    public RefreshToken generateToken(String username) {
+    public String generateToken(String username) {
         User user = userService.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found", username)));
 
@@ -35,21 +33,16 @@ public class RefreshTokenService {
                 .expiryDate(LocalDateTime.now().plusDays(7))
                 .build();
 
-        return refreshTokenRepository.save(refreshToken);
+        return refreshTokenRepository.save(refreshToken).getToken();
     }
 
-    public boolean validateToken(String token) {
+    public boolean isValid(String token) {
         Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByToken(token);
         if (refreshTokenOptional.isPresent()) {
             RefreshToken refreshToken = refreshTokenOptional.get();
             return refreshToken.getExpiryDate().isAfter(LocalDateTime.now());
         }
         return false;
-    }
-
-    @Transactional
-    public void deleteByToken(String token) {
-        refreshTokenRepository.deleteByToken(token);
     }
 
     @Transactional
@@ -60,16 +53,4 @@ public class RefreshTokenService {
     public String findUsernameByToken(String token) {
         return refreshTokenRepository.findUsernameByToken(token);
     }
-
-    // TODO: to token service
-    public void addRTokenToCookies(String refreshToken, HttpServletResponse response) {
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(-1);
-
-        response.addCookie(refreshTokenCookie);
-    }
-
 }

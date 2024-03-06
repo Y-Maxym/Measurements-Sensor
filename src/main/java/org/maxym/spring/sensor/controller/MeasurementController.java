@@ -28,15 +28,20 @@ public class MeasurementController {
 
     @GetMapping
     public ResponseEntity<?> getAllMeasurements() {
-        List<MeasurementResponse> measurementResponses = measurementService.findAll().stream()
+
+        List<MeasurementResponse> measurementResponses = measurementService.findAll()
+                .stream()
                 .map(measurementMapper::map)
                 .toList();
+
         return ResponseEntity.status(HttpStatus.OK).body(measurementResponses);
     }
 
     @GetMapping("/rainyDaysCount")
     public ResponseEntity<?> getCountRainyDays() {
+
         Long rainyDays = measurementService.countAllByRainingTrue();
+
         return ResponseEntity.status(HttpStatus.OK).body(rainyDays);
     }
 

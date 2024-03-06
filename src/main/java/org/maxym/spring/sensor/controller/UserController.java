@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -32,7 +31,9 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
-        List<UserResponse> userResponses = userService.findAll().stream()
+
+        List<UserResponse> userResponses = userService.findAll()
+                .stream()
                 .map(userMapper::map)
                 .toList();
 
@@ -41,23 +42,24 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        Optional<User> optionalUser = userService.findById(id);
 
-        if (optionalUser.isEmpty()) {
+        // TODO: maybe in service
+        UserResponse user = userService.findById(id)
+                .map(userMapper::map)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-            throw new UserNotFoundException("User not found");
-        }
-        User user = optionalUser.get();
-        UserResponse userResponse = userMapper.map(user);
-        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @GetMapping("/info")
     public ResponseEntity<?> getInfo() {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AuthDetails details = (AuthDetails) authentication.getPrincipal();
 
-        UserInfo userInfo = userInfoMapper.map(details.user());
+        User user = details.user();
+
+        UserInfo userInfo = userInfoMapper.map(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(userInfo);
     }
