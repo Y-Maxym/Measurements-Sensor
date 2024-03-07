@@ -1,7 +1,7 @@
-package org.maxym.spring.sensor.service;
+package org.maxym.spring.sensor.security.service;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.model.AuthDetails;
+import org.maxym.spring.sensor.security.model.AuthDetails;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.repository.UserRepository;
 import org.springframework.http.HttpStatus;

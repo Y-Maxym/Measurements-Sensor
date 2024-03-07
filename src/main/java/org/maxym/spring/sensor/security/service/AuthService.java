@@ -1,8 +1,10 @@
-package org.maxym.spring.sensor.service;
+package org.maxym.spring.sensor.security.service;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.maxym.spring.sensor.security.service.JWTService;
+import org.maxym.spring.sensor.service.RefreshTokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;

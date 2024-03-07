@@ -1,5 +1,7 @@
-package org.maxym.spring.sensor.model;
+package org.maxym.spring.sensor.security.model;
 
+import org.maxym.spring.sensor.model.Role;
+import org.maxym.spring.sensor.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

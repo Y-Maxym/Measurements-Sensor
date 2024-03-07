@@ -9,7 +9,7 @@ import org.maxym.spring.sensor.dto.UserRequest;
 import org.maxym.spring.sensor.exception.RefreshTokenException;
 import org.maxym.spring.sensor.exception.UserCreationException;
 import org.maxym.spring.sensor.model.User;
-import org.maxym.spring.sensor.service.AuthService;
+import org.maxym.spring.sensor.security.service.AuthService;
 import org.maxym.spring.sensor.service.BindingResultService;
 import org.maxym.spring.sensor.service.RefreshTokenService;
 import org.maxym.spring.sensor.service.UserService;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.UserInfo;
 import org.maxym.spring.sensor.dto.UserResponse;
 import org.maxym.spring.sensor.exception.UserNotFoundException;
-import org.maxym.spring.sensor.model.AuthDetails;
+import org.maxym.spring.sensor.security.model.AuthDetails;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.UserInfoMapper;
