@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.RefreshToken;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.repository.RefreshTokenRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,8 +39,9 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken).getToken();
     }
 
+    @SuppressWarnings("all")
     public boolean isValid(String token) {
-        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByToken(token);
+        Optional<RefreshToken> refreshTokenOptional = findByToken(token);
         if (refreshTokenOptional.isPresent()) {
             RefreshToken refreshToken = refreshTokenOptional.get();
             return refreshToken.getExpiryDate().isAfter(LocalDateTime.now());
@@ -45,11 +49,21 @@ public class RefreshTokenService {
         return false;
     }
 
+    @Cacheable(value = "refreshTokenByToken", key = "#token")
+    public Optional<RefreshToken> findByToken(String token) {
+        return refreshTokenRepository.findByToken(token);
+    }
+
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "refreshTokenByToken", key = "#username"),
+            @CacheEvict(value = "usernameByToken", allEntries = true)
+    })
     public void deleteByUser_Username(String username) {
         refreshTokenRepository.deleteByUser_Username(username);
     }
 
+    @Cacheable(value = "usernameByToken", key = "#token")
     public String findUsernameByToken(String token) {
         return refreshTokenRepository.findUsernameByToken(token);
     }

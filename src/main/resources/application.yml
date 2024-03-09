@@ -20,6 +20,9 @@ spring:
       lifecycle-management: ${COMPOSE_LIFECYCLE}
       profiles:
         active: ${COMPOSE_PROFILE}
+  data:
+    redis:
+      url: rediss://red-cnm9p9mv3ddc73fipuc0:kYnwPoPeZMPXIqtnc7kVWzSgNC0uMMba@frankfurt-redis.render.com:6379
 
   jackson:
     property-naming-strategy: SNAKE_CASE
