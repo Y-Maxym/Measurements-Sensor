@@ -1,9 +1,9 @@
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/sensor
-    username: user
-    password: user
+    driver-class-name: ${DB_DRIVER}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     properties:
@@ -13,6 +13,13 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: true
+
+  docker:
+    compose:
+      enabled: ${COMPOSE_ENABLED}
+      lifecycle-management: ${COMPOSE_LIFECYCLE}
+      profiles:
+        active: ${COMPOSE_PROFILE}
 
   jackson:
     property-naming-strategy: SNAKE_CASE

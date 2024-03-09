@@ -84,6 +84,11 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jsonwebtoken}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-docker-compose</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  postgres:
+    profiles:
+      - development
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=sensor
+    ports:
+      - "5432:5432"
