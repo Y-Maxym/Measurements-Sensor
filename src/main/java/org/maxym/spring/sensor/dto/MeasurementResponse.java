@@ -8,5 +8,5 @@ import lombok.Setter;
 public class MeasurementResponse {
     private Double value;
     private Boolean raining;
-    private SensorResponse sensor;
+    private String sensor;
 }

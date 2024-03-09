@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class SensorResponse {
     private String name;
+    private String createdBy;
 }

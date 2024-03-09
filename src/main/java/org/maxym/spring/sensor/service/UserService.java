@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.model.Role;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.repository.UserRepository;
+import org.maxym.spring.sensor.security.model.AuthDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +39,12 @@ public class UserService {
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public User currentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AuthDetails principal = (AuthDetails) authentication.getPrincipal();
+        return principal.user();
     }
 
     @Transactional

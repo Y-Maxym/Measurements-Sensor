@@ -1,6 +1,6 @@
 package org.maxym.spring.sensor.util.mapper;
 
-import org.mapstruct.InheritConfiguration;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.maxym.spring.sensor.dto.SensorRequest;
@@ -13,8 +13,10 @@ public interface SensorMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
     Sensor map(SensorRequest sensorRequest);
 
-    @InheritConfiguration
+    @InheritInverseConfiguration
+    @Mapping(target = "createdBy", source = "createdBy.username")
     SensorResponse map(Sensor sensor);
 }

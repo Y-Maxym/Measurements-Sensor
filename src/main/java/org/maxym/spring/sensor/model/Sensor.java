@@ -30,5 +30,14 @@ public class Sensor {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "created_by", referencedColumnName = "id",
+            nullable = false,
+            updatable = false,
+            foreignKey = @ForeignKey(name = "fk_sensor_created_by",
+                    value = ConstraintMode.CONSTRAINT,
+                    foreignKeyDefinition = "FOREIGN KEY (created_by) REFERENCES \"user\"(id) ON DELETE CASCADE"))
+    private User createdBy;
 }
 

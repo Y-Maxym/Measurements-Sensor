@@ -1,6 +1,7 @@
 package org.maxym.spring.sensor.util.mapper;
 
 import org.mapstruct.InheritConfiguration;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.maxym.spring.sensor.dto.UserRequest;
@@ -16,6 +17,6 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User map(UserRequest userRequestDTO);
 
-    @InheritConfiguration
+    @InheritInverseConfiguration
     UserResponse map(User user);
 }
