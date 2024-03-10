@@ -1,10 +1,9 @@
 package org.maxym.spring.sensor.security.service;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.security.service.JWTService;
 import org.maxym.spring.sensor.service.RefreshTokenService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -22,34 +21,36 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(username, password));
     }
 
-    public void accessToken(String username, HttpServletResponse response) {
+    public void accessToken(String username, HttpHeaders headers) {
         String token = jwtService.generateToken(username);
-        response.setHeader("Authorization", "Bearer " + token);
+        headers.set("Authorization", "Bearer " + token);
     }
 
-    public void refreshToken(String username, HttpServletResponse response) {
+    public void refreshToken(String username, HttpHeaders headers) {
         refreshTokenService.deleteByUser_Username(username);
         String token = refreshTokenService.generateToken(username);
-        addRTokenToCookies(token, response);
+        addRTokenToCookies(token, headers);
     }
 
-    public void addRTokenToCookies(String refreshToken, HttpServletResponse response) {
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(-1);
+    public void addRTokenToCookies(String refreshToken, HttpHeaders headers) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(-1)
+                .build();
 
-        response.addCookie(refreshTokenCookie);
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
-    public void deleteCookie(String cookieName, HttpServletResponse response) {
-        Cookie cookie = new Cookie(cookieName, "");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+    public void deleteCookie(String cookieName, HttpHeaders headers) {
+        ResponseCookie cookie = ResponseCookie.from(cookieName, "")
+                .maxAge(0)
+                .build();
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
-    public void deleteHeader(String header, HttpServletResponse response) {
-        response.setHeader(header, "");
+    public void deleteHeader(String header, HttpHeaders headers) {
+        headers.set(header, "");
     }
 }

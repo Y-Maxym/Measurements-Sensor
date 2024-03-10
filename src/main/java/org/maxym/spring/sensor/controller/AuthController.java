@@ -1,8 +1,5 @@
 package org.maxym.spring.sensor.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.LoginRequest;
 import org.maxym.spring.sensor.dto.UserRequest;
@@ -15,15 +12,15 @@ import org.maxym.spring.sensor.service.RefreshTokenService;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.UserMapper;
 import org.maxym.spring.sensor.util.validator.UserRequestValidator;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,8 +35,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Validated UserRequest userRequest,
-                                    BindingResult bindingResult,
-                                    HttpServletResponse response) {
+                                    BindingResult bindingResult) {
 
         String username = userRequest.username();
 
@@ -49,46 +45,41 @@ public class AuthController {
         User user = userMapper.map(userRequest);
         userService.save(user);
 
-        authService.accessToken(username, response);
-        authService.refreshToken(username, response);
+        HttpHeaders headers = new HttpHeaders();
+        authService.accessToken(username, headers);
+        authService.refreshToken(username, headers);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest,
-                                   HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 
         String username = loginRequest.username();
         String password = loginRequest.password();
 
         authService.authenticate(username, password);
 
-        authService.accessToken(username, response);
-        authService.refreshToken(username, response);
+        HttpHeaders headers = new HttpHeaders();
+        authService.accessToken(username, headers);
+        authService.refreshToken(username, headers);
 
-        return ResponseEntity.status(HttpStatus.OK).body("User authenticated successfully");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body("User authenticated successfully");
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
+    public ResponseEntity<?> logout() {
 
-        authService.deleteCookie("refreshToken", response);
-        authService.deleteHeader("Authorization", response);
+        HttpHeaders headers = new HttpHeaders();
+        authService.deleteCookie("refreshToken", headers);
+        authService.deleteHeader("Authorization", headers);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshAccessToken(HttpServletRequest request,
-                                                HttpServletResponse response) {
-
-        // TODO: auth service
-        String refreshToken = Arrays.stream(request.getCookies())
-                .filter(cookie -> "refreshToken".equals(cookie.getName()))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElse(null);
+    public ResponseEntity<?> refreshAccessToken(@CookieValue(name = "refreshToken", required = false)
+                                                String refreshToken) {
 
         // TODO: auth service
         if (refreshToken == null || !refreshTokenService.isValid(refreshToken)) {
@@ -101,9 +92,10 @@ public class AuthController {
             throw new RefreshTokenException("Refresh Token is not linked to any user");
         }
 
-        authService.accessToken(username, response);
-        authService.refreshToken(username, response);
+        HttpHeaders headers = new HttpHeaders();
+        authService.accessToken(username, headers);
+        authService.refreshToken(username, headers);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Refresh successful");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).headers(headers).body("Refresh successful");
     }
 }
