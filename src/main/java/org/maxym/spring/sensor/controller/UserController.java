@@ -29,10 +29,8 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getUsers() {
 
-        List<UserResponse> userResponses = userService.findAll()
-                .stream()
-                .map(userMapper::map)
-                .toList();
+        List<User> users = userService.findAll();
+        List<UserResponse> userResponses = userMapper.mapList(users);
 
         return ResponseEntity.status(HttpStatus.OK).body(userResponses);
     }

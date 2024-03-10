@@ -23,7 +23,7 @@ public class MeasurementService {
         return measurementRepository.findAll();
     }
 
-    @Cacheable("allRainigDay")
+    @Cacheable("allRainingDay")
     public Long countAllByRainingTrue() {
         return measurementRepository.countAllByRainingTrue();
     }
@@ -31,7 +31,7 @@ public class MeasurementService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "allMeasurement", allEntries = true),
-            @CacheEvict(value = "allRainigDay", allEntries = true)
+            @CacheEvict(value = "allRainingDay", allEntries = true)
     })
     public void save(Measurement measurement) {
         measurementRepository.save(measurement);

@@ -1,10 +1,10 @@
 package org.maxym.spring.sensor.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.MeasurementRequest;
 import org.maxym.spring.sensor.dto.MeasurementResponse;
 import org.maxym.spring.sensor.exception.MeasurementCreationException;
+import org.maxym.spring.sensor.model.Measurement;
 import org.maxym.spring.sensor.service.BindingResultService;
 import org.maxym.spring.sensor.service.MeasurementService;
 import org.maxym.spring.sensor.util.mapper.MeasurementMapper;
@@ -12,6 +12,7 @@ import org.maxym.spring.sensor.util.validator.MeasurementValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,10 +30,8 @@ public class MeasurementController {
     @GetMapping
     public ResponseEntity<?> getAllMeasurements() {
 
-        List<MeasurementResponse> measurementResponses = measurementService.findAll()
-                .stream()
-                .map(measurementMapper::map)
-                .toList();
+        List<Measurement> measurements = measurementService.findAll();
+        List<MeasurementResponse> measurementResponses = measurementMapper.mapList(measurements);
 
         return ResponseEntity.status(HttpStatus.OK).body(measurementResponses);
     }
@@ -46,7 +45,7 @@ public class MeasurementController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addMeasurement(@RequestBody @Valid MeasurementRequest measurementRequest,
+    public ResponseEntity<?> addMeasurement(@RequestBody @Validated MeasurementRequest measurementRequest,
                                             BindingResult bindingResult) {
 
         measurementValidator.validate(measurementRequest, bindingResult);

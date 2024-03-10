@@ -8,10 +8,14 @@ import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", uses = SensorMapper.class)
 public abstract class MeasurementMapper {
 
-    private SensorService sensorService;
+    @Autowired
+    @SuppressWarnings("all")
+    protected SensorService sensorService;
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "measurementDate", ignore = true)
@@ -19,6 +23,7 @@ public abstract class MeasurementMapper {
     @Mapping(target = "updatedAt", ignore = true)
     public abstract Measurement map(MeasurementRequest measurementRequest);
 
+    @Named("map")
     @InheritInverseConfiguration
     @Mapping(target = "sensor", source = "sensor.name")
     public abstract MeasurementResponse map(Measurement measurement);
@@ -28,8 +33,6 @@ public abstract class MeasurementMapper {
         return sensorService.findByName(name).orElseThrow();
     }
 
-    @Autowired
-    public void setSensorService(SensorService sensorService) {
-        this.sensorService = sensorService;
-    }
+    @IterableMapping(qualifiedByName = "map")
+    public abstract List<MeasurementResponse> mapList(List<Measurement> measurements);
 }

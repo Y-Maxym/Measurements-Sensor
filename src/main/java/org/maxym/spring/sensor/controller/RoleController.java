@@ -28,12 +28,10 @@ public class RoleController {
     @GetMapping
     public ResponseEntity<?> getAllRoles() {
 
-        List<RoleResponse> roles = roleService.findAll()
-                .stream()
-                .map(roleMapper::map)
-                .toList();
+        List<Role> roles = roleService.findAll();
+        List<RoleResponse> roleResponses = roleMapper.mapList(roles);
 
-        return ResponseEntity.status(HttpStatus.OK).body(roles);
+        return ResponseEntity.status(HttpStatus.OK).body(roleResponses);
     }
 
     @PostMapping("/grant")
