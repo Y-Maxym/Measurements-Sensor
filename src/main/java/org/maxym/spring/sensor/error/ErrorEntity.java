@@ -7,8 +7,8 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ErrorResponse {
+public class ErrorEntity {
     private String message;
-    private List<FieldErrorResponse> errors;
+    private List<FieldErrorEntity> errors;
     private long timestamp;
 }

@@ -56,11 +56,20 @@ public class UserService {
     }
 
     @Transactional
-    @CacheEvict(value = "allUsers", allEntries = true)
-    public void save(User user) {
+
+    @Caching(evict = {
+            @CacheEvict(value = "allUsers", allEntries = true),
+
+    }, put = {
+            @CachePut(value = "userById", key = "#user.id"),
+            @CachePut(value = "userByUsername", key = "#user.username"),
+            @CachePut(value = "userByEmail", key = "#user.email")
+    })
+    @SuppressWarnings("all")
+    public Optional<User> save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(defaultRoles());
-        userRepository.save(user);
+        return Optional.of(userRepository.save(user));
     }
 
     @Transactional

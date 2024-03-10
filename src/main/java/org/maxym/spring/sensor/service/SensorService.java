@@ -32,7 +32,10 @@ public class SensorService {
     }
 
     @Transactional
-    @CacheEvict(value = "allSensors", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "allSensors", allEntries = true),
+            @CacheEvict(value = "sensorByName", allEntries = true)
+    })
     public void save(Sensor sensor) {
         User currentUser = userService.currentUser();
         sensor.setCreatedBy(currentUser);

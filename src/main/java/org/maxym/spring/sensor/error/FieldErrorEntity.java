@@ -6,11 +6,11 @@ import org.springframework.validation.FieldError;
 
 @Data
 @AllArgsConstructor
-public class FieldErrorResponse {
+public class FieldErrorEntity {
     private String field;
     private String message;
 
-    public FieldErrorResponse(FieldError fieldError) {
+    public FieldErrorEntity(FieldError fieldError) {
         this.field = fieldError.getField();
         this.message = fieldError.getDefaultMessage();
     }

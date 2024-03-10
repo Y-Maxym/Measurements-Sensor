@@ -31,12 +31,15 @@ public class SecurityConfig {
         return httpSecurity
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .userDetailsService(authDetailsService)
                 .sessionManagement(managementConfigurer -> managementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/login", "/logout", "/refresh", "/signup").permitAll()
+                        .requestMatchers("/login", "/logout", "/error/**", "/refresh", "/signup").permitAll()
                         .requestMatchers("/users/info").authenticated()
                         .requestMatchers("/sensors").hasRole("ADMIN")
                         .requestMatchers("/sensors/registration").hasAnyRole("ADMIN", "USER")

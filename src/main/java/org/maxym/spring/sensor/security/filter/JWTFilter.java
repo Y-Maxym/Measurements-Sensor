@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.maxym.spring.sensor.exception.AccessTokenException;
 import org.maxym.spring.sensor.security.service.AuthDetailsService;
 import org.maxym.spring.sensor.security.service.JWTService;
 import org.springframework.lang.NonNull;
@@ -53,15 +54,12 @@ public class JWTFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
-            //TODO: handle
         } catch (SignatureException exception) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Invalid token\"}");
+            request.setAttribute("exception", new AccessTokenException("Invalid access token"));
+            request.getRequestDispatcher("/error/catch").forward(request, response);
         } catch (ExpiredJwtException exception) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Token has expired\"}");
+            request.setAttribute("exception", new AccessTokenException("Access token has expired"));
+            request.getRequestDispatcher("/error/catch").forward(request, response);
         }
     }
 }

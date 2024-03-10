@@ -1,6 +1,7 @@
 package org.maxym.spring.sensor.handler;
 
-import org.maxym.spring.sensor.error.ErrorResponse;
+import org.maxym.spring.sensor.error.ErrorEntity;
+import org.maxym.spring.sensor.error.SimpleErrorEntity;
 import org.maxym.spring.sensor.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,44 +9,56 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserCreationException.class)
-    public ResponseEntity<ErrorResponse> handleException(UserCreationException exception) {
-        ErrorResponse response = new ErrorResponse(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> handleException(UserCreationException exception) {
+        ErrorEntity error = new ErrorEntity(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<String> handleException(AuthenticationException ignore) {
-        return new ResponseEntity<>("Bad credentials", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> handleException(AuthenticationException exception) {
+        SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(MeasurementCreationException.class)
-    private ResponseEntity<ErrorResponse> handleException(MeasurementCreationException exception) {
-        ErrorResponse response = new ErrorResponse(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    private ResponseEntity<?> handleException(MeasurementCreationException exception) {
+        ErrorEntity error = new ErrorEntity(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(SensorCreationException.class)
-    private ResponseEntity<ErrorResponse> handleException(SensorCreationException exception) {
-        ErrorResponse response = new ErrorResponse(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    private ResponseEntity<?> handleException(SensorCreationException exception) {
+        ErrorEntity error = new ErrorEntity(exception.getMessage(), exception.getErrors(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    private ResponseEntity<String> handleException(UserNotFoundException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    private ResponseEntity<?> handleException(UserNotFoundException exception) {
+        SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(RoleNotFoundException.class)
-    private ResponseEntity<String> handleException(RoleNotFoundException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    private ResponseEntity<?> handleException(RoleNotFoundException exception) {
+        SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(RefreshTokenException.class)
-    private ResponseEntity<String> handleException(RefreshTokenException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    private ResponseEntity<?> handleException(RefreshTokenException exception) {
+        SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(AccessTokenException.class)
+    private ResponseEntity<?> handleException(AccessTokenException exception) {
+        SimpleErrorEntity error = new SimpleErrorEntity(exception.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }
