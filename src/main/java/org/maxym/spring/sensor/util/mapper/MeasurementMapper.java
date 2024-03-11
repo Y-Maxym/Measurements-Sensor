@@ -13,8 +13,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = SensorMapper.class)
 public abstract class MeasurementMapper {
 
-    @SuppressWarnings("all")
     @Autowired
+    @SuppressWarnings("all")
     protected SensorService sensorService;
 
     @Mapping(target = "id", ignore = true)
@@ -30,7 +30,7 @@ public abstract class MeasurementMapper {
 
     @Named("mappingSensor")
     protected Sensor mappingSensor(String name) {
-        return sensorService.findByName(name).orElseThrow();
+        return sensorService.findByName(name);
     }
 
     @IterableMapping(qualifiedByName = "map")

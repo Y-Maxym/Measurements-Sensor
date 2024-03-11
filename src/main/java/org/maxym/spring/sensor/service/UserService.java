@@ -1,6 +1,7 @@
 package org.maxym.spring.sensor.service;
 
 import lombok.RequiredArgsConstructor;
+import org.maxym.spring.sensor.exception.UserNotFoundException;
 import org.maxym.spring.sensor.model.Role;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.repository.UserRepository;
@@ -15,10 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,18 +37,38 @@ public class UserService {
     }
 
     @Cacheable(value = "userById", key = "#id")
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(format("User with id %d not found.", id)));
     }
 
     @Cacheable(value = "userByUsername", key = "#username")
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(format("User %s not found.", username)));
+    }
+
+    @Cacheable(value = "userByUsernameNullable", key = "#username")
+    public User findByUsernameNullable(String username) {
+        return userRepository.findByUsername(username)
+                .orElse(null);
+    }
+
+    public User findByUsernameRoleFetch(String username) {
+        return userRepository.findByUsernameRoleFetch(username)
+                .orElseThrow(() -> new UserNotFoundException(format("User %s not found.", username)));
     }
 
     @Cacheable(value = "userByEmail", key = "#email")
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(format("User with email %s not found.", email)));
+    }
+
+    @Cacheable(value = "userByEmailNullable", key = "#email")
+    public User findByEmailNullable(String email) {
+        return userRepository.findByEmail(email)
+                .orElse(null);
     }
 
     public User currentUser() {
@@ -55,7 +77,6 @@ public class UserService {
         return principal.user();
     }
 
-    @SuppressWarnings("all")
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "allUsers", allEntries = true),
@@ -65,10 +86,11 @@ public class UserService {
             @CachePut(value = "userByUsername", key = "#user.username"),
             @CachePut(value = "userByEmail", key = "#user.email")
     })
-    public Optional<User> save(User user) {
+    @SuppressWarnings("all")
+    public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(defaultRoles());
-        return Optional.of(userRepository.save(user));
+        user.setRoles(new HashSet<>(defaultRoles()));
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -101,14 +123,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Cacheable(value = "userHasRole", key = "#role.id + '_' + user.id")
-    public boolean hasRole(Role role, User user) {
+    @Cacheable(value = "userHasRole", key = "#role.id + '_' + #user.id")
+    public boolean hasRole(User user, Role role) {
         return user.getRoles().contains(role);
     }
 
     public Set<Role> defaultRoles() {
-        return roleService.findByRole("ROLE_USER")
-                .stream()
-                .collect(Collectors.toSet());
+        return Set.of(roleService.findByRole("ROLE_USER"));
     }
 }

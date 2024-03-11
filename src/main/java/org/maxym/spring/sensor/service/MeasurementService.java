@@ -28,12 +28,13 @@ public class MeasurementService {
         return measurementRepository.countAllByRainingTrue();
     }
 
-    @Transactional
     @Caching(evict = {
             @CacheEvict(value = "allMeasurement", allEntries = true),
             @CacheEvict(value = "allRainingDay", allEntries = true)
     })
-    public void save(Measurement measurement) {
-        measurementRepository.save(measurement);
+    @Transactional
+    @SuppressWarnings("all")
+    public Measurement save(Measurement measurement) {
+        return measurementRepository.save(measurement);
     }
 }

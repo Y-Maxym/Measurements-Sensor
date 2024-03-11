@@ -16,7 +16,7 @@ import java.util.function.Function;
 public class JWTService {
 
     private final SecretKey key = Jwts.SIG.HS256.key().build();
-    @Value("${jwt.duration}")
+    @Value("${jwt.access.duration}")
     private Duration duration;
 
     public String generateToken(String username) {

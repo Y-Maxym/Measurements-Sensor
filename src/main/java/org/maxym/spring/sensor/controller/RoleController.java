@@ -3,13 +3,12 @@ package org.maxym.spring.sensor.controller;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.RoleResponse;
 import org.maxym.spring.sensor.dto.UserRole;
-import org.maxym.spring.sensor.exception.RoleNotFoundException;
-import org.maxym.spring.sensor.exception.UserNotFoundException;
 import org.maxym.spring.sensor.model.Role;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.service.RoleService;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.RoleMapper;
+import org.maxym.spring.sensor.util.validator.UserValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,7 @@ import java.util.List;
 public class RoleController {
 
     private final UserService userService;
+    private final UserValidator userValidator;
     private final RoleService roleService;
     private final RoleMapper roleMapper;
 
@@ -40,13 +40,10 @@ public class RoleController {
         String username = userRole.username();
         String roleName = userRole.role();
 
-        // TODO: validator
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", username)));
+        User user = userService.findByUsername(username);
+        Role role = roleService.findByRole(roleName);
 
-        // TODO: validator
-        Role role = roleService.findByRole(roleName)
-                .orElseThrow(() -> new RoleNotFoundException(String.format("Role %s not found", roleName)));
+        userValidator.hasNoRole(user, role);
 
         userService.grantRole(role, user);
 
@@ -59,18 +56,10 @@ public class RoleController {
         String username = userRole.username();
         String roleName = userRole.role();
 
-        // TODO: validator
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User %s not found", username)));
+        User user = userService.findByUsernameRoleFetch(username);
+        Role role = roleService.findByRole(roleName);
 
-        // TODO: validator
-        Role role = roleService.findByRole(roleName)
-                .orElseThrow(() -> new RoleNotFoundException(String.format("Role %s not found", roleName)));
-
-        // TODO: validator
-        if (!userService.hasRole(role, user)) {
-            throw new RoleNotFoundException(String.format("User %s does not have %s role", username, roleName));
-        }
+        userValidator.hasRole(user, role);
 
         userService.takeRole(role, user);
 

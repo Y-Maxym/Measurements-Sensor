@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.util.Optional;
+import static java.util.Objects.nonNull;
 
 @Component
 @RequiredArgsConstructor
@@ -26,13 +26,16 @@ public class UserRequestValidator implements Validator {
     public void validate(@NonNull Object target, @NonNull Errors errors) {
         UserRequest dto = (UserRequest) target;
 
-        Optional<User> byUsername = userService.findByUsername(dto.username());
-        Optional<User> byEmail = userService.findByEmail(dto.email());
+        String username = dto.username();
+        String email = dto.email();
 
-        if (byUsername.isPresent()) {
+        User byUsername = userService.findByUsernameNullable(username);
+        User byEmail = userService.findByEmailNullable(email);
+
+        if (nonNull(byUsername)) {
             errors.rejectValue("username", "user.username.exist", "This username is already taken.");
         }
-        if (byEmail.isPresent()) {
+        if (nonNull(byEmail)) {
             errors.rejectValue("email", "user.email.exist", "This email is already taken.");
         }
     }

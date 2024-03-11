@@ -28,6 +28,9 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
 
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
 logging:
   level:
     org:
@@ -35,4 +38,7 @@ logging:
         security: debug
 
 jwt:
-  duration: 1h
+  access:
+    duration: 1h
+  refresh:
+    duration: 7d

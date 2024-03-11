@@ -3,7 +3,6 @@ package org.maxym.spring.sensor.controller;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.UserInfo;
 import org.maxym.spring.sensor.dto.UserResponse;
-import org.maxym.spring.sensor.exception.UserNotFoundException;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.UserInfoMapper;
@@ -38,19 +37,16 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
 
-        // TODO: maybe in service
-        UserResponse user = userService.findById(id)
-                .map(userMapper::map)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userService.findById(id);
+        UserResponse userResponse = userMapper.map(user);
 
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
     @GetMapping("/info")
     public ResponseEntity<?> getInfo() {
 
         User user = userService.currentUser();
-
         UserInfo userInfo = userInfoMapper.map(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(userInfo);

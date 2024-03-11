@@ -7,7 +7,6 @@ import org.maxym.spring.sensor.service.RefreshTokenService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static java.util.Objects.isNull;
 
@@ -24,11 +23,7 @@ public class RefreshTokenValidator {
     }
 
     private boolean isValid(String token) {
-        Optional<RefreshToken> refreshTokenOptional = refreshTokenService.findByToken(token);
-        if (refreshTokenOptional.isPresent()) {
-            RefreshToken refreshToken = refreshTokenOptional.get();
-            return refreshToken.getExpiryDate().isAfter(LocalDateTime.now());
-        }
-        return false;
+        RefreshToken refreshToken = refreshTokenService.findByToken(token);
+        return refreshToken.getExpiryDate().isAfter(LocalDateTime.now());
     }
 }
