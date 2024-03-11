@@ -3,7 +3,6 @@ package org.maxym.spring.sensor.controller;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.dto.LoginRequest;
 import org.maxym.spring.sensor.dto.UserRequest;
-import org.maxym.spring.sensor.exception.RefreshTokenException;
 import org.maxym.spring.sensor.exception.UserCreationException;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.security.service.AuthService;
@@ -11,6 +10,7 @@ import org.maxym.spring.sensor.service.BindingResultService;
 import org.maxym.spring.sensor.service.RefreshTokenService;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.UserMapper;
+import org.maxym.spring.sensor.util.validator.RefreshTokenValidator;
 import org.maxym.spring.sensor.util.validator.UserRequestValidator;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +30,7 @@ public class AuthController {
     private final UserMapper userMapper;
     private final UserRequestValidator userRequestValidator;
     private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenValidator refreshTokenValidator;
     private final AuthService authService;
     private final BindingResultService bindingResultService;
 
@@ -79,23 +80,16 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAccessToken(@CookieValue(name = "refreshToken", required = false)
-                                                String refreshToken) {
+                                                String token) {
 
-        // TODO: auth service
-        if (refreshToken == null || !refreshTokenService.isValid(refreshToken)) {
-            throw new RefreshTokenException("Invalid Refresh Token");
-        }
+        refreshTokenValidator.validate(token);
 
-        // TODO: auth service
-        String username = refreshTokenService.findUsernameByToken(refreshToken);
-        if (username == null) {
-            throw new RefreshTokenException("Refresh Token is not linked to any user");
-        }
+        String username = refreshTokenService.findUsernameByToken(token);
 
         HttpHeaders headers = new HttpHeaders();
         authService.accessToken(username, headers);
         authService.refreshToken(username, headers);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).headers(headers).body("Refresh successful");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body("Refresh successful");
     }
 }

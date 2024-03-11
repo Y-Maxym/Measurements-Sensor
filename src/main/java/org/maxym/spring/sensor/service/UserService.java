@@ -55,8 +55,8 @@ public class UserService {
         return principal.user();
     }
 
+    @SuppressWarnings("all")
     @Transactional
-
     @Caching(evict = {
             @CacheEvict(value = "allUsers", allEntries = true),
 
@@ -65,7 +65,6 @@ public class UserService {
             @CachePut(value = "userByUsername", key = "#user.username"),
             @CachePut(value = "userByEmail", key = "#user.email")
     })
-    @SuppressWarnings("all")
     public Optional<User> save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(defaultRoles());
@@ -105,7 +104,6 @@ public class UserService {
         return user.getRoles().contains(role);
     }
 
-    @Cacheable(value = "defaultRoles")
     public Set<Role> defaultRoles() {
         return roleService.findByRole("ROLE_USER")
                 .stream()

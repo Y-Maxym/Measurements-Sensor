@@ -13,8 +13,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = SensorMapper.class)
 public abstract class MeasurementMapper {
 
-    @Autowired
     @SuppressWarnings("all")
+    @Autowired
     protected SensorService sensorService;
 
     @Mapping(target = "id", ignore = true)
