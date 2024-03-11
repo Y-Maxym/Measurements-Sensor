@@ -78,7 +78,8 @@ public class UserService {
             @CacheEvict(value = "userByUsername", key = "#user.username"),
             @CacheEvict(value = "userByEmail", key = "#user.email"),
             @CacheEvict(value = "userHasRole", key = "#role.id + '_' + #user.id"),
-            @CacheEvict(value = "loadUserByUsername", key = "#user.username")
+            @CacheEvict(value = "loadUserByUsername", key = "#user.username"),
+            @CacheEvict(value = "userDetails", key = "#user.username")
     })
     public void grantRole(Role role, User user) {
         user.getRoles().add(role);
@@ -92,7 +93,8 @@ public class UserService {
             @CacheEvict(value = "userByUsername", key = "#user.username"),
             @CacheEvict(value = "userByEmail", key = "#user.email"),
             @CacheEvict(value = "userHasRole", key = "#role.id + '_' + #user.id"),
-            @CacheEvict(value = "loadUserByUsername", key = "#user.username")
+            @CacheEvict(value = "loadUserByUsername", key = "#user.username"),
+            @CacheEvict(value = "userDetails", key = "#user.username")
     })
     public void takeRole(Role role, User user) {
         user.getRoles().remove(role);
