@@ -9,6 +9,8 @@ import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 
+import java.time.Duration;
+
 @Configuration
 public class RedisConfig {
 
@@ -16,7 +18,9 @@ public class RedisConfig {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisConnection connection = redisConnectionFactory.getConnection();
         connection.serverCommands().flushDb();
+
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(10));
         return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
-                .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()).build();
+                .cacheDefaults(redisCacheConfiguration).build();
     }
 }
