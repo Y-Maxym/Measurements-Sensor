@@ -8,13 +8,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.maxym.spring.sensor.exception.AccessTokenException;
-import org.maxym.spring.sensor.security.service.AuthDetailsService;
 import org.maxym.spring.sensor.security.service.JWTService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,7 +26,7 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
-    private final AuthDetailsService authDetailsService;
+    private final UserDetailsService userDetailsService;
     private final JWTService JWTService;
 
     @Override
@@ -42,7 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
                 if (nonNull(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                    UserDetails userDetails = authDetailsService.loadUserByUsername(username);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             userDetails.getPassword(),

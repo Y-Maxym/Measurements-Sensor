@@ -5,19 +5,24 @@ import org.maxym.spring.sensor.exception.UserNotFoundException;
 import org.maxym.spring.sensor.model.Role;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.repository.UserRepository;
-import org.maxym.spring.sensor.security.model.AuthDetails;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -25,11 +30,16 @@ import static java.lang.String.format;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Cacheable("allUsers")
     public List<User> findAll() {
@@ -73,8 +83,7 @@ public class UserService {
 
     public User currentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AuthDetails principal = (AuthDetails) authentication.getPrincipal();
-        return principal.user();
+        return (User) authentication.getPrincipal();
     }
 
     @Transactional
@@ -130,5 +139,17 @@ public class UserService {
 
     public Set<Role> defaultRoles() {
         return Set.of(roleService.findByRole("ROLE_USER"));
+    }
+
+    @Override
+    @Cacheable(value = "userDetails", key = "#username")
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        Optional<User> byUsername = userRepository.findByUsernameRoleFetch(username);
+
+        if (byUsername.isEmpty()) {
+            throw new UserNotFoundException(format("User %s not found.", username));
+        }
+        return byUsername.get();
     }
 }

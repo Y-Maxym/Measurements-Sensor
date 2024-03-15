@@ -14,6 +14,7 @@ public interface UserMapper {
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     User map(UserRequest userRequestDTO);
 
     @Named("map")
