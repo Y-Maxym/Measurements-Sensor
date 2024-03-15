@@ -1,4 +1,7 @@
 spring:
+  config:
+    import: optional:file:render.env[.properties]
+
   datasource:
     driver-class-name: ${DB_DRIVER}
     url: ${DB_URL}
