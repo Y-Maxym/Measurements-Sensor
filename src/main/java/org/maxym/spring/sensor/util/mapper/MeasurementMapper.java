@@ -1,8 +1,8 @@
 package org.maxym.spring.sensor.util.mapper;
 
 import org.mapstruct.*;
-import org.maxym.spring.sensor.dto.MeasurementRequest;
-import org.maxym.spring.sensor.dto.MeasurementResponse;
+import org.maxym.spring.sensor.dto.MeasurementRequestDto;
+import org.maxym.spring.sensor.dto.MeasurementResponseDto;
 import org.maxym.spring.sensor.model.Measurement;
 import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.SensorService;
@@ -21,12 +21,12 @@ public abstract class MeasurementMapper {
     @Mapping(target = "measurementDate", ignore = true)
     @Mapping(target = "sensor", source = "sensor.name", qualifiedByName = "mappingSensor")
     @Mapping(target = "updatedAt", ignore = true)
-    public abstract Measurement map(MeasurementRequest measurementRequest);
+    public abstract Measurement map(MeasurementRequestDto measurementRequestDto);
 
     @Named("map")
     @InheritInverseConfiguration
     @Mapping(target = "sensor", source = "sensor.name")
-    public abstract MeasurementResponse map(Measurement measurement);
+    public abstract MeasurementResponseDto map(Measurement measurement);
 
     @Named("mappingSensor")
     protected Sensor mappingSensor(String name) {
@@ -34,5 +34,5 @@ public abstract class MeasurementMapper {
     }
 
     @IterableMapping(qualifiedByName = "map")
-    public abstract List<MeasurementResponse> mapList(List<Measurement> measurements);
+    public abstract List<MeasurementResponseDto> mapList(List<Measurement> measurements);
 }

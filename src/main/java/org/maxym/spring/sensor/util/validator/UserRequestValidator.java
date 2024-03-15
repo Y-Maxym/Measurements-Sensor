@@ -1,7 +1,7 @@
 package org.maxym.spring.sensor.util.validator;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.UserRequest;
+import org.maxym.spring.sensor.dto.UserRequestDto;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.service.UserService;
 import org.springframework.lang.NonNull;
@@ -19,12 +19,12 @@ public class UserRequestValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return UserRequest.class.equals(clazz);
+        return UserRequestDto.class.equals(clazz);
     }
 
     @Override
     public void validate(@NonNull Object target, @NonNull Errors errors) {
-        UserRequest dto = (UserRequest) target;
+        UserRequestDto dto = (UserRequestDto) target;
 
         String username = dto.username();
         String email = dto.email();

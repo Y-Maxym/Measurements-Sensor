@@ -1,8 +1,8 @@
 package org.maxym.spring.sensor.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.RoleResponse;
-import org.maxym.spring.sensor.dto.UserRole;
+import org.maxym.spring.sensor.dto.RoleResponseDto;
+import org.maxym.spring.sensor.dto.UserRoleDto;
 import org.maxym.spring.sensor.model.Role;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.service.RoleService;
@@ -29,16 +29,16 @@ public class RoleController {
     public ResponseEntity<?> getAllRoles() {
 
         List<Role> roles = roleService.findAll();
-        List<RoleResponse> roleResponses = roleMapper.mapList(roles);
+        List<RoleResponseDto> roleResponseDtoList = roleMapper.mapList(roles);
 
-        return ResponseEntity.status(HttpStatus.OK).body(roleResponses);
+        return ResponseEntity.status(HttpStatus.OK).body(roleResponseDtoList);
     }
 
     @PostMapping("/grant")
-    public ResponseEntity<?> grantRole(@RequestBody UserRole userRole) {
+    public ResponseEntity<?> grantRole(@RequestBody UserRoleDto userRoleDto) {
 
-        String username = userRole.username();
-        String roleName = userRole.role();
+        String username = userRoleDto.username();
+        String roleName = userRoleDto.role();
 
         User user = userService.findByUsername(username);
         Role role = roleService.findByRole(roleName);
@@ -51,12 +51,12 @@ public class RoleController {
     }
 
     @PostMapping("/take")
-    public ResponseEntity<?> takeRole(@RequestBody UserRole userRole) {
+    public ResponseEntity<?> takeRole(@RequestBody UserRoleDto userRoleDto) {
 
-        String username = userRole.username();
-        String roleName = userRole.role();
+        String username = userRoleDto.username();
+        String roleName = userRoleDto.role();
 
-        User user = userService.findByUsernameRoleFetch(username);
+        User user = userService.findByUsernameWithRole(username);
         Role role = roleService.findByRole(roleName);
 
         userValidator.hasRole(user, role);

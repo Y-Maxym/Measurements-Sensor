@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-public record UserRequest(
+public record UserRequestDto(
 
         @NotEmpty(message = "Username should not be empty")
         @Size(min = 3, max = 30, message = "Username should be between 3 and 30 characters")

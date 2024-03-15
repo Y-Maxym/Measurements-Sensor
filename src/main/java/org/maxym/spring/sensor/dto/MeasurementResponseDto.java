@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class MeasurementResponse {
+public class MeasurementResponseDto {
     private Double value;
     private Boolean raining;
     private String sensor;

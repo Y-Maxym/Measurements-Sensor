@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RoleResponse {
-    private String role;
+public class SensorResponseDto {
+    private String name;
+    private String createdBy;
 }

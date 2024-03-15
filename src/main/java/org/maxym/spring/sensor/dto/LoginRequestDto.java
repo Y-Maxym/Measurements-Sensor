@@ -1,7 +1,7 @@
 package org.maxym.spring.sensor.dto;
 
-public record UserRole(
+public record LoginRequestDto(
         String username,
-        String role
+        String password
 ) {
 }

@@ -1,7 +1,7 @@
 package org.maxym.spring.sensor.util.validator;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.SensorRequest;
+import org.maxym.spring.sensor.dto.SensorRequestDto;
 import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.SensorService;
 import org.springframework.lang.NonNull;
@@ -19,15 +19,15 @@ public class SensorValidator implements Validator {
 
     @Override
     public boolean supports(@NonNull Class<?> clazz) {
-        return SensorRequest.class.equals(clazz);
+        return SensorRequestDto.class.equals(clazz);
     }
 
     @Override
     public void validate(@NonNull Object target,
                          @NonNull Errors errors) {
 
-        SensorRequest sensorRequest = (SensorRequest) target;
-        String name = sensorRequest.name();
+        SensorRequestDto sensorRequestDto = (SensorRequestDto) target;
+        String name = sensorRequestDto.name();
 
         Sensor sensor = sensorService.findByNameNullable(name);
 

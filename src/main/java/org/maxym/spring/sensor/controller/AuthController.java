@@ -1,8 +1,8 @@
 package org.maxym.spring.sensor.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.LoginRequest;
-import org.maxym.spring.sensor.dto.UserRequest;
+import org.maxym.spring.sensor.dto.LoginRequestDto;
+import org.maxym.spring.sensor.dto.UserRequestDto;
 import org.maxym.spring.sensor.exception.UserCreationException;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.security.service.AuthService;
@@ -35,15 +35,15 @@ public class AuthController {
     private final BindingResultService bindingResultService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Validated UserRequest userRequest,
+    public ResponseEntity<?> signup(@RequestBody @Validated UserRequestDto userRequestDto,
                                     BindingResult bindingResult) {
 
-        String username = userRequest.username();
+        String username = userRequestDto.username();
 
-        userRequestValidator.validate(userRequest, bindingResult);
+        userRequestValidator.validate(userRequestDto, bindingResult);
         bindingResultService.handle(bindingResult, UserCreationException::new);
 
-        User user = userMapper.map(userRequest);
+        User user = userMapper.map(userRequestDto);
         userService.save(user);
 
         HttpHeaders headers = new HttpHeaders();
@@ -54,10 +54,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
 
-        String username = loginRequest.username();
-        String password = loginRequest.password();
+        String username = loginRequestDto.username();
+        String password = loginRequestDto.password();
 
         authService.authenticate(username, password);
 

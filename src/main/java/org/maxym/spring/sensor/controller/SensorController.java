@@ -1,8 +1,8 @@
 package org.maxym.spring.sensor.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.SensorRequest;
-import org.maxym.spring.sensor.dto.SensorResponse;
+import org.maxym.spring.sensor.dto.SensorRequestDto;
+import org.maxym.spring.sensor.dto.SensorResponseDto;
 import org.maxym.spring.sensor.exception.SensorCreationException;
 import org.maxym.spring.sensor.model.Sensor;
 import org.maxym.spring.sensor.service.BindingResultService;
@@ -31,20 +31,20 @@ public class SensorController {
     public ResponseEntity<?> getAllSensors() {
 
         List<Sensor> sensors = sensorService.findAll();
-        List<SensorResponse> sensorResponses = sensorMapper.mapList(sensors);
+        List<SensorResponseDto> sensorResponseDtoList = sensorMapper.mapList(sensors);
 
-        return new ResponseEntity<>(sensorResponses, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(sensorResponseDtoList);
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<?> registrationNewSensor(@RequestBody @Validated SensorRequest sensorRequest,
+    public ResponseEntity<?> registrationNewSensor(@RequestBody @Validated SensorRequestDto sensorRequestDto,
                                                    BindingResult bindingResult) {
 
-        sensorValidator.validate(sensorRequest, bindingResult);
+        sensorValidator.validate(sensorRequestDto, bindingResult);
         bindingResultService.handle(bindingResult, SensorCreationException::new);
 
-        sensorService.save(sensorMapper.map(sensorRequest));
+        sensorService.save(sensorMapper.map(sensorRequestDto));
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

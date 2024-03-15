@@ -64,8 +64,8 @@ public class UserService implements UserDetailsService {
                 .orElse(null);
     }
 
-    public User findByUsernameRoleFetch(String username) {
-        return userRepository.findByUsernameRoleFetch(username)
+    public User findByUsernameWithRole(String username) {
+        return userRepository.findByUsernameWithRole(username)
                 .orElseThrow(() -> new UserNotFoundException(format("User %s not found.", username)));
     }
 
@@ -145,7 +145,7 @@ public class UserService implements UserDetailsService {
     @Cacheable(value = "userDetails", key = "#username")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Optional<User> byUsername = userRepository.findByUsernameRoleFetch(username);
+        Optional<User> byUsername = userRepository.findByUsernameWithRole(username);
 
         if (byUsername.isEmpty()) {
             throw new UserNotFoundException(format("User %s not found.", username));

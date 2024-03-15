@@ -1,8 +1,8 @@
 package org.maxym.spring.sensor.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.UserInfo;
-import org.maxym.spring.sensor.dto.UserResponse;
+import org.maxym.spring.sensor.dto.UserInfoDto;
+import org.maxym.spring.sensor.dto.UserResponseDto;
 import org.maxym.spring.sensor.model.User;
 import org.maxym.spring.sensor.service.UserService;
 import org.maxym.spring.sensor.util.mapper.UserInfoMapper;
@@ -29,26 +29,26 @@ public class UserController {
     public ResponseEntity<?> getUsers() {
 
         List<User> users = userService.findAll();
-        List<UserResponse> userResponses = userMapper.mapList(users);
+        List<UserResponseDto> userResponseDtoList = userMapper.mapList(users);
 
-        return ResponseEntity.status(HttpStatus.OK).body(userResponses);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponseDtoList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
 
         User user = userService.findById(id);
-        UserResponse userResponse = userMapper.map(user);
+        UserResponseDto userResponseDto = userMapper.map(user);
 
-        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
     }
 
     @GetMapping("/info")
     public ResponseEntity<?> getInfo() {
 
         User user = userService.currentUser();
-        UserInfo userInfo = userInfoMapper.map(user);
+        UserInfoDto userInfoDto = userInfoMapper.map(user);
 
-        return ResponseEntity.status(HttpStatus.OK).body(userInfo);
+        return ResponseEntity.status(HttpStatus.OK).body(userInfoDto);
     }
 }

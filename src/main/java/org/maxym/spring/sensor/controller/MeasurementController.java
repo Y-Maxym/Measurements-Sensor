@@ -1,14 +1,14 @@
 package org.maxym.spring.sensor.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.maxym.spring.sensor.dto.MeasurementRequest;
-import org.maxym.spring.sensor.dto.MeasurementResponse;
+import org.maxym.spring.sensor.dto.MeasurementRequestDto;
+import org.maxym.spring.sensor.dto.MeasurementResponseDto;
 import org.maxym.spring.sensor.exception.MeasurementCreationException;
 import org.maxym.spring.sensor.model.Measurement;
 import org.maxym.spring.sensor.service.BindingResultService;
 import org.maxym.spring.sensor.service.MeasurementService;
 import org.maxym.spring.sensor.util.mapper.MeasurementMapper;
-import org.maxym.spring.sensor.util.validator.MeasurementValidator;
+import org.maxym.spring.sensor.util.validator.MeasurementRequestDtoValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -24,16 +24,16 @@ public class MeasurementController {
 
     private final MeasurementService measurementService;
     private final MeasurementMapper measurementMapper;
-    private final MeasurementValidator measurementValidator;
+    private final MeasurementRequestDtoValidator measurementRequestDtoValidator;
     private final BindingResultService bindingResultService;
 
     @GetMapping
     public ResponseEntity<?> getAllMeasurements() {
 
         List<Measurement> measurements = measurementService.findAll();
-        List<MeasurementResponse> measurementResponses = measurementMapper.mapList(measurements);
+        List<MeasurementResponseDto> measurementResponseDtoList = measurementMapper.mapList(measurements);
 
-        return ResponseEntity.status(HttpStatus.OK).body(measurementResponses);
+        return ResponseEntity.status(HttpStatus.OK).body(measurementResponseDtoList);
     }
 
     @GetMapping("/rainyDaysCount")
@@ -45,14 +45,14 @@ public class MeasurementController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addMeasurement(@RequestBody @Validated MeasurementRequest measurementRequest,
+    public ResponseEntity<?> addMeasurement(@RequestBody @Validated MeasurementRequestDto measurementRequestDto,
                                             BindingResult bindingResult) {
 
-        measurementValidator.validate(measurementRequest, bindingResult);
+        measurementRequestDtoValidator.validate(measurementRequestDto, bindingResult);
         bindingResultService.handle(bindingResult, MeasurementCreationException::new);
 
-        measurementService.save(measurementMapper.map(measurementRequest));
+        measurementService.save(measurementMapper.map(measurementRequestDto));
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
